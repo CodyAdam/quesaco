@@ -3,6 +3,7 @@
     <application
         android:label="quesaco"
         android:name="${applicationName}"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -30,7 +31,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
