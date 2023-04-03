@@ -16,9 +16,12 @@ class _HomeState extends State<Flag> {
   bool answerWasSelected = false;
   int totalScore = 0;
   int questionIndex = 0;
+  bool taped = false;
+  List<String> answers = [];
 
-  void questionAnswered(bool answerScore) {
+  void questionAnswered(bool answerScore, String answerCountry) {
     setState(() {
+      answers.add(answerCountry);
       answerWasSelected = true;
       if (answerScore) {
         totalScore++;
@@ -34,7 +37,7 @@ class _HomeState extends State<Flag> {
       questionIndex++;
       answerWasSelected = false;
     });
-    if(questionIndex >= list.length) {
+    if (questionIndex >= list.length) {
       goToMenu();
     }
   }
@@ -82,17 +85,23 @@ class _HomeState extends State<Flag> {
           ...list[questionIndex].map(
             (answer) => Answer(
               answerText: map[answer.country],
+              answerTap: () {
+                if (answerWasSelected) {
+                  print(answer.country.compareTo(answers[questionIndex])==0);
+                  print(answers);
+                  print(answer.country);
+                  return;
+                }
+                questionAnswered(answer.goodOne, answer.country);
+                print(answer.country.compareTo(answers[questionIndex])==0);
+              },
               answerColor: answerWasSelected
                   ? answer.goodOne
                       ? Colors.green
-                      : Colors.red
+                      : answer.country.compareTo(answers[questionIndex])==0
+                          ? Colors.red
+                          : null
                   : null,
-              answerTap: () {
-                if(answerWasSelected) {
-                  return;
-                }
-                questionAnswered(answer.goodOne);
-              },
             ),
           ),
           const SizedBox(
@@ -102,7 +111,7 @@ class _HomeState extends State<Flag> {
               style: ElevatedButton.styleFrom(
                   minimumSize: const Size(100.0, 40.0)),
               onPressed: () {
-                if(!answerWasSelected) {
+                if (!answerWasSelected) {
                   return;
                 }
                 nextQuestion();
@@ -111,8 +120,7 @@ class _HomeState extends State<Flag> {
           Text(
             '${totalScore.toString()}/${list.length.toString()}',
             textAlign: TextAlign.center,
-
-            ),
+          ),
         ]),
       ),
     );
