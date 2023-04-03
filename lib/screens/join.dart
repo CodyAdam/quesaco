@@ -15,6 +15,8 @@ class JoinPage extends StatefulWidget {
 class _JoinPageState extends State<JoinPage> {
   final p2p = P2PManager();
 
+  List<DiscoveredPeers> peers = [];
+
   @override
   void initState() {
     super.initState();
@@ -24,13 +26,14 @@ class _JoinPageState extends State<JoinPage> {
   @override
   void dispose() {
     p2p.stopDiscover();
+    p2p.disconnect();
     super.dispose();
   }
 
   void onRefresh() async {
-    List<DiscoveredPeers> peers = await p2p.getPeers();
+    List<DiscoveredPeers> p = await p2p.getPeers();
     setState(() {
-      p2p.peers = peers;
+      peers = p;
     });
   }
 
@@ -38,23 +41,40 @@ class _JoinPageState extends State<JoinPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Join a room'),
+        title: const Text('Rejoindre une room'),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text('Rooms available'),
-            ButtonBar(
-              children: [
-                ElevatedButton(
-                  onPressed: onRefresh,
-                  child: const Text('Refresh'),
-                ),
-              ],
-            ),
-            // foreach peer in p2p.peers
-            for (var peer in p2p.peers) Text(peer.deviceName),
+            Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    const Text('Les rooms disponibles',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w300,
+                        )),
+                    const Spacer(),
+                    ElevatedButton(
+                      onPressed: onRefresh,
+                      child: const Text('Actualiser'),
+                    ),
+                  ],
+                )),
+            for (var peer in peers)
+              Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(peer.deviceName),
+                      subtitle: const Text("Appuyer pour rejoindre"),
+                      onTap: () {
+                        p2p.connect(peer);
+                      },
+                    ),
+                  ))
           ],
         ),
       ),

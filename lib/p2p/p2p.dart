@@ -5,27 +5,25 @@ import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 
 class P2PManager {
   final _flutterP2pConnectionPlugin = FlutterP2pConnection();
-  List<DiscoveredPeers> peers = [];
   WifiP2PInfo? wifiP2PInfo;
-  Stream<WifiP2PInfo>? _streamWifiInfo;
-  Stream<List<DiscoveredPeers>>? _streamPeers;
+  Stream<WifiP2PInfo>? streamWifiInfo;
+  Stream<List<DiscoveredPeers>>? streamPeers;
   bool isInit = false;
 
   // singleton (init on first use)
   static final P2PManager _instance = P2PManager._internal();
   factory P2PManager() => _instance;
   P2PManager._internal();
-  
 
   Future init() async {
     if (isInit) return;
     await _flutterP2pConnectionPlugin.initialize();
     await _flutterP2pConnectionPlugin.register();
-    _streamWifiInfo = _flutterP2pConnectionPlugin.streamWifiP2PInfo();
-    _streamPeers = _flutterP2pConnectionPlugin.streamPeers();
+    streamWifiInfo = _flutterP2pConnectionPlugin.streamWifiP2PInfo();
+    streamPeers = _flutterP2pConnectionPlugin.streamPeers();
 
-    if (_streamWifiInfo != null) {
-      _streamWifiInfo!.listen((event) {
+    if (streamWifiInfo != null) {
+      streamWifiInfo!.listen((event) {
         wifiP2PInfo = event;
       });
     }
@@ -40,7 +38,7 @@ class P2PManager {
     return await _flutterP2pConnectionPlugin.unregister();
   }
 
-  Future<bool> startSocket() async {
+  Future<bool> _startSocket() async {
     if (wifiP2PInfo != null) {
       bool started = await _flutterP2pConnectionPlugin.startSocket(
         groupOwnerAddress: wifiP2PInfo!.groupOwnerAddress,
@@ -100,12 +98,14 @@ class P2PManager {
     }
   }
 
-  bool closeSocketConnection() {
+  bool _closeSocketConnection() {
     return _flutterP2pConnectionPlugin.closeSocket();
   }
 
   Future<bool> host() async {
-    return await _flutterP2pConnectionPlugin.createGroup();
+    final a = await _flutterP2pConnectionPlugin.createGroup();
+    final b = await _startSocket();
+    return a && b;
   }
 
   Future<WifiP2PGroupInfo?> groupInfo() async {
@@ -113,7 +113,9 @@ class P2PManager {
   }
 
   Future<bool> disconnect() async {
-    return await _flutterP2pConnectionPlugin.removeGroup();
+    final a = await _flutterP2pConnectionPlugin.removeGroup();
+    final b = _closeSocketConnection();
+    return a && b;
   }
 
   Future<bool> discover() async {
