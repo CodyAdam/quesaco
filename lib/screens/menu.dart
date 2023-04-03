@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'host.dart';
+import 'join.dart';
+
 class Menu extends StatelessWidget {
   const Menu({super.key});
 
@@ -18,7 +21,7 @@ class Menu extends StatelessWidget {
                   // Navigate
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const TestScene()),
+                    MaterialPageRoute(builder: (context) => const HostPage()),
                   );
                 },
                 child: const Text('Create a room'),
@@ -29,30 +32,12 @@ class Menu extends StatelessWidget {
                   // Navigate
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const TestScene()),
+                    MaterialPageRoute(builder: (context) => const JoinPage()),
                   );
                 },
                 child: const Text('Join a room'),
               ),
             ],
-          ),
-        ));
-  }
-}
-
-class TestScene extends StatelessWidget {
-  const TestScene({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('test'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [Text('Create a room')],
           ),
         ));
   }
