@@ -116,6 +116,7 @@ class P2PManager {
     final a = await _flutterP2pConnectionPlugin.removeGroup();
     final b = _closeSocketConnection();
     return a && b;
+    
   }
 
   Future<bool> discover() async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import 'package:quesaco/screens/waiting.dart';
 
 import '../p2p/p2p.dart';
 
@@ -14,27 +15,50 @@ class JoinPage extends StatefulWidget {
 
 class _JoinPageState extends State<JoinPage> {
   final p2p = P2PManager();
+  bool shouldDisconnect = true;
 
   List<DiscoveredPeers> peers = [];
 
   @override
   void initState() {
     super.initState();
-    p2p.init().then((value) => p2p.discover());
+    init();
+  }
+
+  Future init() async {
+    await p2p.init();
+    await p2p.discover();
+    List<DiscoveredPeers> p = await p2p.getPeers();
+    setState(() {
+      peers = p;
+    });
   }
 
   @override
   void dispose() {
     p2p.stopDiscover();
-    p2p.disconnect();
+    if (shouldDisconnect) {
+      p2p.disconnect();
+    }
     super.dispose();
   }
 
   void onRefresh() async {
+    await p2p.disconnect();
     List<DiscoveredPeers> p = await p2p.getPeers();
     setState(() {
       peers = p;
     });
+  }
+
+  Future onConnect(DiscoveredPeers peer, BuildContext context) async {
+    bool success = await p2p.connect(peer);
+    if (!mounted) return;
+    if (success) {
+      shouldDisconnect = false;
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const WaitingPage()));
+    }
   }
 
   @override
@@ -71,7 +95,7 @@ class _JoinPageState extends State<JoinPage> {
                       title: Text(peer.deviceName),
                       subtitle: const Text("Appuyer pour rejoindre"),
                       onTap: () {
-                        p2p.connect(peer);
+                        onConnect(peer, context);
                       },
                     ),
                   ))

@@ -3,16 +3,16 @@ import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 
 import '../p2p/p2p.dart';
 
-class HostPage extends StatefulWidget {
-  const HostPage({super.key});
+class WaitingPage extends StatefulWidget {
+  const WaitingPage({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return _HostPageState();
+    return _WaitingPageState();
   }
 }
 
-class _HostPageState extends State<HostPage> {
+class _WaitingPageState extends State<WaitingPage> {
   final p2p = P2PManager();
   WifiP2PGroupInfo? info;
 
@@ -24,7 +24,6 @@ class _HostPageState extends State<HostPage> {
 
   Future init() async {
     await p2p.init();
-    await p2p.host();
     final fetchedInfo = await p2p.groupInfo();
     setState(() {
       info = fetchedInfo;
@@ -48,7 +47,7 @@ class _HostPageState extends State<HostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Créer une Room'),
+        title: const Text('Salle d\'attente'),
       ),
       body: Center(
         child: Column(
@@ -58,8 +57,9 @@ class _HostPageState extends State<HostPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    const Text('Les autres joueurs connectés',
-                        style: TextStyle(
+                    Text(
+                        'Connectée à la room ${info != null ? info!.groupNetworkName : "?"}',
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w300,
                         )),
@@ -70,35 +70,10 @@ class _HostPageState extends State<HostPage> {
                     ),
                   ],
                 )),
-            if (info != null)
-              for (var client in info!.clients)
-                Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Card(
-                      child: ListTile(
-                        title: Text(client.deviceName),
-                        subtitle: Text(client.deviceAddress),
-                      ),
-                    )),
-            if (info != null && info!.clients.isEmpty)
-              const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Card(
-                    child: ListTile(
-                      title: Text("Personne n'est connecté"),
-                    ),
-                  )),
             const Spacer(),
             if (info != null)
               Column(
                 children: [
-                  Text(
-                    "${info!.clients.length + 1}/4 joueurs",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
                   SizedBox(
                       width: double.infinity,
                       child: Padding(
@@ -107,12 +82,12 @@ class _HostPageState extends State<HostPage> {
                             style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                        Colors.green)),
+                                        Colors.grey)),
                             onPressed: null,
                             child: const Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 20),
-                              child: Text("Commencer la partie",
+                              child: Text("En attente de l'hôte",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 24)),
                             )),
