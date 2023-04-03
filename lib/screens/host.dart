@@ -20,10 +20,15 @@ class _HostPageState extends State<HostPage> {
   void initState() {
     super.initState();
     p2p.init().then((value) => {
-          p2p.host(),
-          setState(
-            () {},
-          )
+          p2p.host().then((value) => {
+                p2p.groupInfo().then((value) => {
+                      setState(
+                        () {
+                          info = value;
+                        },
+                      )
+                    })
+              })
         });
   }
 
@@ -75,7 +80,46 @@ class _HostPageState extends State<HostPage> {
                         title: Text(client.deviceName),
                         subtitle: Text(client.deviceAddress),
                       ),
-                    ))
+                    )),
+            if (info != null && info!.clients.isEmpty)
+              const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Card(
+                    child: ListTile(
+                      title: Text("Personne n'est connecté"),
+                    ),
+                  )),
+            const Spacer(),
+            if (info != null)
+              Column(
+                children: [
+                  Text(
+                    "${info!.clients.length + 1}/4 joueurs",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.green)),
+                            onPressed: null,
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 20),
+                              child: Text("Commencer la partie",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 24)),
+                            )),
+                      ))
+                ],
+              )
           ],
         ),
       ),
