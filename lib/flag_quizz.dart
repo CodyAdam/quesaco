@@ -12,8 +12,45 @@ class Flag extends StatefulWidget {
 
 class _HomeState extends State<Flag> {
   var list = random();
+  bool endOfQuiz = false;
+  bool answerWasSelected = false;
+  int totalScore = 0;
+  int questionIndex = 0;
+
+  void questionAnswered(bool answerScore) {
+    setState(() {
+      answerWasSelected = true;
+      if (answerScore) {
+        totalScore++;
+      }
+      if (questionIndex + 1 == list.length) {
+        endOfQuiz = true;
+      }
+    });
+  }
+
+  void nextQuestion() {
+    setState(() {
+      questionIndex++;
+      answerWasSelected = false;
+    });
+    if(questionIndex >= list.length) {
+      goToMenu();
+    }
+  }
+
+  void goToMenu() {
+    setState(() {
+      questionIndex = 0;
+      totalScore = 0;
+      endOfQuiz = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var goodList = getGoodOnes(list);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -35,45 +72,102 @@ class _HomeState extends State<Flag> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 image: DecorationImage(
-                  image: AssetImage('assets/${list[0]}.png'),
+                  image: AssetImage('assets/${goodList[questionIndex]}.png'),
                   fit: BoxFit.scaleDown,
                 )),
           ),
           const SizedBox(
             height: 40,
           ),
-          Answer(answerText: map[list[0]]),
-          const Answer(answerText: 'Ghana'),
-          const Answer(answerText: 'France'),
-          const Answer(answerText: 'Canada'),
+          ...list[questionIndex].map(
+            (answer) => Answer(
+              answerText: map[answer.country],
+              answerColor: answerWasSelected
+                  ? answer.goodOne
+                      ? Colors.green
+                      : Colors.red
+                  : null,
+              answerTap: () {
+                if(answerWasSelected) {
+                  return;
+                }
+                questionAnswered(answer.goodOne);
+              },
+            ),
+          ),
           const SizedBox(
             height: 20.0,
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(100.0, 40.0)
+              style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(100.0, 40.0)),
+              onPressed: () {
+                if(!answerWasSelected) {
+                  return;
+                }
+                nextQuestion();
+              },
+              child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
+          Text(
+            '${totalScore.toString()}/${list.length.toString()}',
+            textAlign: TextAlign.center,
+
             ),
-              onPressed: () {},
-              child: const Text('Question suivante')
-          )
         ]),
       ),
     );
   }
 }
 
-List<String> random()  {
-  var list = <String>[];
+class Pair<A, B> {
+  A _country;
+  B _goodOne;
+
+  Pair(this._country, this._goodOne);
+
+  A get country => _country;
+
+  set country(A value) => _country = value;
+
+  B get goodOne => _goodOne;
+
+  set goodOne(B value) => _goodOne = value;
+
+  @override
+  String toString() => '($_country, $_goodOne)';
+}
+
+List<List<Pair<String, bool>>> random() {
+  var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
   var random = Random();
-  while(keys.length > map.length-10) {
-    var index = random.nextInt(keys.length);
-    var key = keys[index];
-    keys[index] = keys.last;
-    keys.length--;
-    list.add(key);
+  int numberOfQuestions = 10;
+  while (keys.length > map.length - numberOfQuestions * 4) {
+    var countriesTrueOrNot = <Pair<String, bool>>[];
+    var randomOrder = Random();
+    var order = randomOrder.nextInt(4);
+    for (int i = 0; i < 4; i++) {
+      var index = random.nextInt(keys.length);
+      var key = keys[index];
+      keys[index] = keys.last;
+      keys.length--;
+      countriesTrueOrNot.add(Pair(key, i == order ? true : false));
+    }
+    listOfList.add(countriesTrueOrNot);
   }
-  return list;
+  return listOfList;
+}
+
+List<String> getGoodOnes(List<List<Pair<String, bool>>> list) {
+  var goodList = <String>[];
+  for (List l in list) {
+    for (Pair p in l) {
+      if (p.goodOne) {
+        goodList.add(p.country);
+      }
+    }
+  }
+  return goodList;
 }
 
 var map = {
@@ -82,7 +176,7 @@ var map = {
   'za': 'Afrique du Sud',
   'ax': 'Åland',
   'al': 'Albanie',
-  'dz':'Algérie',
+  'dz': 'Algérie',
   'de': 'Allemagne',
   'gb-en': 'Angleterre',
   'ao': 'Angola',
@@ -115,7 +209,7 @@ var map = {
   'bg': 'Bulgarie',
   'bf': 'Burkina Faso',
   'bi': 'Burundi',
-  'kh':'Cambodge',
+  'kh': 'Cambodge',
   'cm': 'Cameroun',
   'ca': 'Canada',
   'cl': 'Chili',
@@ -123,14 +217,14 @@ var map = {
   'cy': 'Chypre',
   'va': 'Vatican',
   'co': 'Colombie',
-  'km':'Comores',
+  'km': 'Comores',
   'cg': 'Congo',
-  'cd':'Congo (Rép. dém.)',
+  'cd': 'Congo (Rép. dém.)',
   'kp': 'Corée du Nord',
   'kr': 'Corée du Sud',
   'cr': 'Costa Rica',
   'ci': 'Côte d\'Ivoire',
-  'hr':'Croatie',
+  'hr': 'Croatie',
   'cu': 'Cuba',
   'cw': 'Curaçao',
   'dk': 'Danemark',
@@ -171,7 +265,7 @@ var map = {
   'hk': 'Hong Kong',
   'hu': 'Hongrie',
   'bv': 'Île Bouvet',
-  'cx':'Île Christmas',
+  'cx': 'Île Christmas',
   'im': 'Île de Man',
   'mu': 'Maurice',
   'nf': 'Île Norfolk',
@@ -185,7 +279,7 @@ var map = {
   'mp': 'Îles Mariannes du Nord',
   'mh': 'Îles Marshall',
   'um': 'Îles mineures éloignées des États-Unis',
-  'pn':'Îles Pitcairn',
+  'pn': 'Îles Pitcairn',
   'sb': 'Îles Salomon',
   'tc': 'Îles Turques-et-Caïques',
   'vg': 'Îles Vierges britanniques',
@@ -227,108 +321,108 @@ var map = {
   'ml': 'Mali',
   'mt': 'Malte',
   'ma': 'Maroc',
-  'mq':'Martinique',
-  'mr':'Mauritanie',
-  'yt':'Mayotte',
-  'mx':'Mexique',
-  'fm':'Micronésie',
-  'md':'Moldavie',
-  'mc':'Monaco',
-  'mn':'Mongolie',
-  'me':'Monténégro',
-  'ms':'Montserrat',
-  'mz':'Mozambique',
-  'na':'Namibie',
-  'nr':'Nauru',
-  'np':'Népal',
-  'ni':'Nicaragua',
-  'ne':'Niger',
-  'ng':'Nigeria',
-  'nu':'Niue',
-  'no':'Norvège',
-  'nc':'Nouvelle-Calédonie',
-  'nz':'Nouvelle-Zélande',
-  'om':'Oman',
-  'ug':'Ouganda',
-  'uz':'Ouzbékistan',
-  'pk':'Pakistan',
-  'pw':'Palaos',
-  'ps':'Palestine',
-  'pa':'Panama',
-  'pg':'Papouasie-Nouvelle-Guinée',
-  'py':'Paraguay',
-  'gb-wls':'Pays de Galles',
-  'nl':'Pays-Bas',
-  'bq':'Pays-Bas caribéens',
-  'pe':'Pérou',
-  'ph':'Philippines',
-  'pl':'Pologne',
-  'pf':'Polynésie française',
-  'pr':'Porto Rico',
-  'pt':'Portugal',
-  'qa':'Qatar',
-  'cf':'République centrafricaine',
-  'do':'République dominicaine',
-  're':'Réunion',
-  'ro':'Roumanie',
-  'gb':'Royaume-Uni',
-  'ru':'Russie',
-  'rw':'Rwanda',
-  'eh':'Sahara Occidental',
-  'bl':'Saint-Barthélemy',
-  'kn':'Saint-Christophe-et-Niévès',
-  'sm':'Saint-Marin',
-  'mf':'Saint-Martin (Antilles françaises)',
-  'sx':'Saint-Martin (royaume des Pays-Bas)',
-  'pm':'Saint-Pierre-et-Miquelon',
-  'vc':'Saint-Vincent-et-les-Grenadines',
-  'sh':'Sainte-Hélène, Ascension et Tristan da Cunha',
-  'lc':'Sainte-Lucie',
-  'sv':'Salvador',
-  'ws':'Samoa',
-  'as':'Samoa américaines',
-  'st':'Sao Tomé-et-Principe',
-  'sn':'Sénégal',
-  'rs':'Serbie',
-  'sc':'Seychelles',
-  'sl':'Sierra Leone',
-  'sg':'Singapour',
-  'sk':'Slovaquie',
-  'si':'Slovénie',
-  'so':'Somalie',
-  'sd':'Soudan',
-  'ss':'Soudan du Sud',
-  'lk':'Sri Lanka',
-  'se':'Suède',
-  'ch':'Suisse',
-  'sr':'Suriname',
-  'sj':'Svalbard et Jan Mayen',
-  'sz':'Eswatini',
-  'sy':'Syrie',
-  'tj':'Tadjikistan',
-  'tw':'Taïwan',
-  'tz':'Tanzanie',
-  'td':'Tchad',
-  'cz':'Tchéquie',
-  'tf':'Terres australes et antarctiques françaises',
-  'io':'Territoire britannique de l\'océan Indien',
-  'th':'Thaïlande',
-  'tl':'Timor oriental',
-  'tg':'Togo',
-  'tk':'Tokelau',
-  'to':'Tonga',
-  'tt':'Trinité-et-Tobago',
-  'tn':'Tunisie',
-  'tm':'Turkménistan',
-  'tr':'Turquie',
-  'tv':'Tuvalu',
-  'ua':'Ukraine',
-  'uy':'Uruguay',
-  'vu':'Vanuatu',
-  've':'Venezuela',
-  'vn':'Viêt Nam',
-  'wf':'Wallis-et-Futuna',
-  'ye':'Yémen',
-  'zm':'Zambie',
-  'zw':'Zimbabwe',
+  'mq': 'Martinique',
+  'mr': 'Mauritanie',
+  'yt': 'Mayotte',
+  'mx': 'Mexique',
+  'fm': 'Micronésie',
+  'md': 'Moldavie',
+  'mc': 'Monaco',
+  'mn': 'Mongolie',
+  'me': 'Monténégro',
+  'ms': 'Montserrat',
+  'mz': 'Mozambique',
+  'na': 'Namibie',
+  'nr': 'Nauru',
+  'np': 'Népal',
+  'ni': 'Nicaragua',
+  'ne': 'Niger',
+  'ng': 'Nigeria',
+  'nu': 'Niue',
+  'no': 'Norvège',
+  'nc': 'Nouvelle-Calédonie',
+  'nz': 'Nouvelle-Zélande',
+  'om': 'Oman',
+  'ug': 'Ouganda',
+  'uz': 'Ouzbékistan',
+  'pk': 'Pakistan',
+  'pw': 'Palaos',
+  'ps': 'Palestine',
+  'pa': 'Panama',
+  'pg': 'Papouasie-Nouvelle-Guinée',
+  'py': 'Paraguay',
+  'gb-wls': 'Pays de Galles',
+  'nl': 'Pays-Bas',
+  'bq': 'Pays-Bas caribéens',
+  'pe': 'Pérou',
+  'ph': 'Philippines',
+  'pl': 'Pologne',
+  'pf': 'Polynésie française',
+  'pr': 'Porto Rico',
+  'pt': 'Portugal',
+  'qa': 'Qatar',
+  'cf': 'République centrafricaine',
+  'do': 'République dominicaine',
+  're': 'Réunion',
+  'ro': 'Roumanie',
+  'gb': 'Royaume-Uni',
+  'ru': 'Russie',
+  'rw': 'Rwanda',
+  'eh': 'Sahara Occidental',
+  'bl': 'Saint-Barthélemy',
+  'kn': 'Saint-Christophe-et-Niévès',
+  'sm': 'Saint-Marin',
+  'mf': 'Saint-Martin (Antilles françaises)',
+  'sx': 'Saint-Martin (royaume des Pays-Bas)',
+  'pm': 'Saint-Pierre-et-Miquelon',
+  'vc': 'Saint-Vincent-et-les-Grenadines',
+  'sh': 'Sainte-Hélène, Ascension et Tristan da Cunha',
+  'lc': 'Sainte-Lucie',
+  'sv': 'Salvador',
+  'ws': 'Samoa',
+  'as': 'Samoa américaines',
+  'st': 'Sao Tomé-et-Principe',
+  'sn': 'Sénégal',
+  'rs': 'Serbie',
+  'sc': 'Seychelles',
+  'sl': 'Sierra Leone',
+  'sg': 'Singapour',
+  'sk': 'Slovaquie',
+  'si': 'Slovénie',
+  'so': 'Somalie',
+  'sd': 'Soudan',
+  'ss': 'Soudan du Sud',
+  'lk': 'Sri Lanka',
+  'se': 'Suède',
+  'ch': 'Suisse',
+  'sr': 'Suriname',
+  'sj': 'Svalbard et Jan Mayen',
+  'sz': 'Eswatini',
+  'sy': 'Syrie',
+  'tj': 'Tadjikistan',
+  'tw': 'Taïwan',
+  'tz': 'Tanzanie',
+  'td': 'Tchad',
+  'cz': 'Tchéquie',
+  'tf': 'Terres australes et antarctiques françaises',
+  'io': 'Territoire britannique de l\'océan Indien',
+  'th': 'Thaïlande',
+  'tl': 'Timor oriental',
+  'tg': 'Togo',
+  'tk': 'Tokelau',
+  'to': 'Tonga',
+  'tt': 'Trinité-et-Tobago',
+  'tn': 'Tunisie',
+  'tm': 'Turkménistan',
+  'tr': 'Turquie',
+  'tv': 'Tuvalu',
+  'ua': 'Ukraine',
+  'uy': 'Uruguay',
+  'vu': 'Vanuatu',
+  've': 'Venezuela',
+  'vn': 'Viêt Nam',
+  'wf': 'Wallis-et-Futuna',
+  'ye': 'Yémen',
+  'zm': 'Zambie',
+  'zw': 'Zimbabwe',
 };
