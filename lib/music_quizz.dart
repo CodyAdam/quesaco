@@ -4,17 +4,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:quesaco/answer.dart';
 
-class Flag extends StatefulWidget {
-  const Flag({super.key});
+class Music extends StatefulWidget {
+  const Music({super.key});
 
   @override
-  State<Flag> createState() => _HomeState();
+  State<Music> createState() => _HomeState();
 }
 
-class _HomeState extends State<Flag> {
+class _HomeState extends State<Music> {
   late Timer timer;
   Stopwatch stopwatch = Stopwatch();
-  int timeLimit = 60;
+  int timeLimit = 15;
   String timeRemaining = "";
 
   var list = random();
@@ -25,41 +25,16 @@ class _HomeState extends State<Flag> {
   bool taped = false;
   List<String> answers = [];
 
-  void questionAnswered(bool answerScore, String answerCountry) {
+  void questionAnswered(bool answerScore, String answerMusic) {
     setState(() {
-      answers.add(answerCountry);
+      answers.add(answerMusic);
       answerWasSelected = true;
       if (answerScore) {
         totalScore++;
-      } else {
-        showPopupFor3Seconds();
       }
       if (questionIndex + 1 == list.length) {
         endOfQuiz = true;
       }
-    });
-  }
-
-  void showPopup() {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return const AlertDialog(
-            content: Text(
-              "Mauvaise réponse !\nPénalité de 3 secondes !",
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: Colors.red,
-          );
-        }
-    );
-  }
-
-  void showPopupFor3Seconds() {
-    showPopup();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pop();
     });
   }
 
@@ -142,8 +117,8 @@ class _HomeState extends State<Flag> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
-                image: DecorationImage(
-                  image: AssetImage('assets/${goodList[questionIndex]}.png'),
+                image: const DecorationImage(
+                  image: AssetImage('assets/orateur.png'),
                   fit: BoxFit.scaleDown,
                 )),
           ),
@@ -217,7 +192,7 @@ List<List<Pair<String, bool>>> random() {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
   var random = Random();
-  int numberOfQuestions = 50;
+  int numberOfQuestions = 10;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];
     var randomOrder = Random();
@@ -248,258 +223,54 @@ List<String> getGoodOnes(List<List<Pair<String, bool>>> list) {
 
 
 var map = {
-  'ad': 'Andorre',
-  'af': 'Afghanistan',
-  'za': 'Afrique du Sud',
-  'ax': 'Åland',
-  'al': 'Albanie',
-  'dz': 'Algérie',
-  'de': 'Allemagne',
-  'gb-en': 'Angleterre',
-  'ao': 'Angola',
-  'ai': 'Anguilla',
-  'aq': 'Antarctique',
-  'ag': 'Antigua-et-Barbuda',
-  'sa': 'Arabie saoudite',
-  'ar': 'Argentine',
-  'am': 'Arménie',
-  'aw': 'Aruba',
-  'au': 'Australie',
-  'at': 'Autriche',
-  'az': 'Azerbaïdjan',
-  'bs': 'Bahamas',
-  'bh': 'Bahreïn',
-  'bd': 'Bangladesh',
-  'bb': 'Barbade',
-  'be': 'Belgique',
-  'bz': 'Belize',
-  'bj': 'Bénin',
-  'bm': 'Bermudes',
-  'bt': 'Bhoutan',
-  'by': 'Biélorussie',
-  'mm': 'Birmanie',
-  'bo': 'Bolivie',
-  'ba': 'Bosnie-Herzégovine',
-  'bw': 'Botswana',
-  'br': 'Brésil',
-  'bn': 'Brunei',
-  'bg': 'Bulgarie',
-  'bf': 'Burkina Faso',
-  'bi': 'Burundi',
-  'kh': 'Cambodge',
-  'cm': 'Cameroun',
-  'ca': 'Canada',
-  'cl': 'Chili',
-  'cn': 'Chine',
-  'cy': 'Chypre',
-  'va': 'Vatican',
-  'co': 'Colombie',
-  'km': 'Comores',
-  'cg': 'Congo',
-  'cd': 'Congo (Rép. dém.)',
-  'kp': 'Corée du Nord',
-  'kr': 'Corée du Sud',
-  'cr': 'Costa Rica',
-  'ci': 'Côte d\'Ivoire',
-  'hr': 'Croatie',
-  'cu': 'Cuba',
-  'cw': 'Curaçao',
-  'dk': 'Danemark',
-  'dj': 'Djibouti',
-  'dm': 'Dominique',
-  'gb-sct': 'Écosse',
-  'eg': 'Égypte',
-  'ae': 'Émirats arabes unis',
-  'ec': 'Équateur',
-  'er': 'Érythrée',
-  'es': 'Espagne',
-  'ee': 'Estonie',
-  'us': 'États-Unis',
-  'et': 'Éthiopie',
-  'fj': 'Fidji',
-  'fi': 'Finlande',
-  'fr': 'France',
-  'ga': 'Gabon',
-  'gm': 'Gambie',
-  'ge': 'Géorgie',
-  'gs': 'Géorgie du Sud-et-les Îles Sandwich du Sud',
-  'gh': 'Ghana',
-  'gi': 'Gibraltar',
-  'gr': 'Grèce',
-  'gd': 'Grenade',
-  'gl': 'Groenland',
-  'gp': 'Guadeloupe',
-  'gu': 'Guam',
-  'gt': 'Guatemala',
-  'gg': 'Guernesey',
-  'gn': 'Guinée',
-  'gq': 'Guinée équatoriale',
-  'gw': 'Guinée-Bissau',
-  'gy': 'Guyana',
-  'gf': 'Guyane',
-  'ht': 'Haïti',
-  'hn': 'Honduras',
-  'hk': 'Hong Kong',
-  'hu': 'Hongrie',
-  'bv': 'Île Bouvet',
-  'cx': 'Île Christmas',
-  'im': 'Île de Man',
-  'mu': 'Maurice',
-  'nf': 'Île Norfolk',
-  'ky': 'Îles Caïmans',
-  'cc': 'Îles Cocos',
-  'ck': 'Îles Cook',
-  'cv': 'Cap-Vert',
-  'fo': 'Îles Féroé',
-  'hm': 'Îles Heard-et-MacDonald',
-  'fk': 'Îles Malouines',
-  'mp': 'Îles Mariannes du Nord',
-  'mh': 'Îles Marshall',
-  'um': 'Îles mineures éloignées des États-Unis',
-  'pn': 'Îles Pitcairn',
-  'sb': 'Îles Salomon',
-  'tc': 'Îles Turques-et-Caïques',
-  'vg': 'Îles Vierges britanniques',
-  'vi': 'Îles Vierges des États-Unis',
-  'in': 'Inde',
-  'id': 'Indonésie',
-  'iq': 'Irak',
-  'ir': 'Iran',
-  'ie': 'Irlande',
-  'gb-nir': 'Irlande du Nord',
-  'is': 'Islande',
-  'il': 'Israël',
-  'it': 'Italie',
-  'jm': 'Jamaïque',
-  'jp': 'Japon',
-  'je': 'Jersey',
-  'jo': 'Jordanie',
-  'kz': 'Kazakhstan',
-  'ke': 'Kenya',
-  'kg': 'Kirghizistan',
-  'ki': 'Kiribati',
-  'xk': 'Kosovo',
-  'kw': 'Koweït',
-  'la': 'Laos',
-  'ls': 'Lesotho',
-  'lv': 'Lettonie',
-  'lb': 'Liban',
-  'lr': 'Liberia',
-  'ly': 'Libye',
-  'li': 'Liechtenstein',
-  'lt': 'Lituanie',
-  'lu': 'Luxembourg',
-  'mo': 'Macao',
-  'mk': 'Macédoine du Nord',
-  'mg': 'Madagascar',
-  'my': 'Malaisie',
-  'mw': 'Malawi',
-  'mv': 'Maldives',
-  'ml': 'Mali',
-  'mt': 'Malte',
-  'ma': 'Maroc',
-  'mq': 'Martinique',
-  'mr': 'Mauritanie',
-  'yt': 'Mayotte',
-  'mx': 'Mexique',
-  'fm': 'Micronésie',
-  'md': 'Moldavie',
-  'mc': 'Monaco',
-  'mn': 'Mongolie',
-  'me': 'Monténégro',
-  'ms': 'Montserrat',
-  'mz': 'Mozambique',
-  'na': 'Namibie',
-  'nr': 'Nauru',
-  'np': 'Népal',
-  'ni': 'Nicaragua',
-  'ne': 'Niger',
-  'ng': 'Nigeria',
-  'nu': 'Niue',
-  'no': 'Norvège',
-  'nc': 'Nouvelle-Calédonie',
-  'nz': 'Nouvelle-Zélande',
-  'om': 'Oman',
-  'ug': 'Ouganda',
-  'uz': 'Ouzbékistan',
-  'pk': 'Pakistan',
-  'pw': 'Palaos',
-  'ps': 'Palestine',
-  'pa': 'Panama',
-  'pg': 'Papouasie-Nouvelle-Guinée',
-  'py': 'Paraguay',
-  'gb-wls': 'Pays de Galles',
-  'nl': 'Pays-Bas',
-  'bq': 'Pays-Bas caribéens',
-  'pe': 'Pérou',
-  'ph': 'Philippines',
-  'pl': 'Pologne',
-  'pf': 'Polynésie française',
-  'pr': 'Porto Rico',
-  'pt': 'Portugal',
-  'qa': 'Qatar',
-  'cf': 'République centrafricaine',
-  'do': 'République dominicaine',
-  're': 'Réunion',
-  'ro': 'Roumanie',
-  'gb': 'Royaume-Uni',
-  'ru': 'Russie',
-  'rw': 'Rwanda',
-  'eh': 'Sahara Occidental',
-  'bl': 'Saint-Barthélemy',
-  'kn': 'Saint-Christophe-et-Niévès',
-  'sm': 'Saint-Marin',
-  'mf': 'Saint-Martin (Antilles françaises)',
-  'sx': 'Saint-Martin (royaume des Pays-Bas)',
-  'pm': 'Saint-Pierre-et-Miquelon',
-  'vc': 'Saint-Vincent-et-les-Grenadines',
-  'sh': 'Sainte-Hélène, Ascension et Tristan da Cunha',
-  'lc': 'Sainte-Lucie',
-  'sv': 'Salvador',
-  'ws': 'Samoa',
-  'as': 'Samoa américaines',
-  'st': 'Sao Tomé-et-Principe',
-  'sn': 'Sénégal',
-  'rs': 'Serbie',
-  'sc': 'Seychelles',
-  'sl': 'Sierra Leone',
-  'sg': 'Singapour',
-  'sk': 'Slovaquie',
-  'si': 'Slovénie',
-  'so': 'Somalie',
-  'sd': 'Soudan',
-  'ss': 'Soudan du Sud',
-  'lk': 'Sri Lanka',
-  'se': 'Suède',
-  'ch': 'Suisse',
-  'sr': 'Suriname',
-  'sj': 'Svalbard et Jan Mayen',
-  'sz': 'Eswatini',
-  'sy': 'Syrie',
-  'tj': 'Tadjikistan',
-  'tw': 'Taïwan',
-  'tz': 'Tanzanie',
-  'td': 'Tchad',
-  'cz': 'Tchéquie',
-  'tf': 'Terres australes et antarctiques françaises',
-  'io': 'Territoire britannique de l\'océan Indien',
-  'th': 'Thaïlande',
-  'tl': 'Timor oriental',
-  'tg': 'Togo',
-  'tk': 'Tokelau',
-  'to': 'Tonga',
-  'tt': 'Trinité-et-Tobago',
-  'tn': 'Tunisie',
-  'tm': 'Turkménistan',
-  'tr': 'Turquie',
-  'tv': 'Tuvalu',
-  'ua': 'Ukraine',
-  'uy': 'Uruguay',
-  'vu': 'Vanuatu',
-  've': 'Venezuela',
-  'vn': 'Viêt Nam',
-  'wf': 'Wallis-et-Futuna',
-  'ye': 'Yémen',
-  'zm': 'Zambie',
-  'zw': 'Zimbabwe',
+  'Age of Empire 2': 'Age of Empire 2',
+  'Animal Crossing New Horizons' : 'Animal Crossing : New Horizons',
+  'Assassin\'s Creed 2' : 'Assassin\'s Creed 2',
+  'Banjo-Kazooie' : 'Banjo-Kazooie',
+  'Castlevania' : 'Castlevania',
+  'Civilization 4' : 'Civilization 4.mp3',
+  'Crash Bandicoot' : 'Crash Bandicoot',
+  'Dark Souls' : 'Dark Souls',
+  'Donkey Kong Country' : 'Donkey Kong Country',
+  'Doom' : 'Doom',
+  'F-Zero' : 'F-Zero',
+  'Final Fantasy VII' : 'Final Fantasy VII',
+  'Final Fantasy X' : 'Final Fantasy X',
+  'GTA San Andreas' : 'GTA San Andreas',
+  'Halo 2' : 'Halo 2',
+  'Kingdom Hearts' : 'Kingdom Hearts',
+  'Kirby Superstar' : 'Kirby Superstar',
+  'Luigi\'s Mansion' : 'Luigi\'s Mansion',
+  'Mario Kart 8' : 'Mario Kart 8',
+  'Mega Man 2' : 'Mega Man 2',
+  'Metal Gear Solid' : 'Metal Gear Solid',
+  'Metroid Prime' : 'Metroid Prime',
+  'Minecraft' : 'Minecraft',
+  'Mortal Kombat' : 'Mortal Kombat',
+  'Persona 5' : 'Persona 5',
+  'Phoenix Wright Ace Attorney' : 'Phoenix Wright : Ace Attorney',
+  'Pokémon Diamant-Perle' : 'Pokémon Diamant/Perle',
+  'Pokémon Rouge-Bleu' : 'Pokémon Rouge/Bleu',
+  'Portal' : 'Portal',
+  'Professeur Layton and the Curious Village' : 'Professeur Layton and the Curious Village',
+  'Punch-Out!!' : 'Punch-Out!!',
+  'Ratchet & Clank' : 'Ratchet & Clank',
+  'Shadow of the Colossus' : 'Shadow of the Colossus',
+  'Sonic The Hedgehog' : 'Sonic The Hedgehog',
+  'Spyro the Dragon' : 'Spyro the Dragon',
+  'Star Fox' : 'Star Fox',
+  'Street Fighter 2' : 'Street Fighter 2',
+  'Super Mario Bros' : 'Super Mario Bros',
+  'Super Mario Odyssey' : 'Super Mario Odyssey',
+  'Super Mario 64' : 'Super Mario 64',
+  'Team Fortress 2' : 'Team Fortress 2',
+  'Tetris' : 'Tetris',
+  'The Elder Scrolls V Skyrim' : 'The Elder Scrolls V : Skyrim',
+  'The Last of Us' : 'The Last of Us',
+  'The Legend Of Zelda' : 'The Legend Of Zelda',
+  'The Legend of Zelda Ocarina of Time' : 'The Legend of Zelda : Ocarina of Time',
+  'The Witcher 3' : 'The Witcher 3',
+  'Uncharted 2' : 'Uncharted 2',
+  'Undertale' : 'Undertale',
+  'Wii Sports' : 'Wii Sports'
 };
