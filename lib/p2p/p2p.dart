@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class P2PManager {
   final _flutterP2pConnectionPlugin = FlutterP2pConnection();
@@ -109,14 +111,25 @@ class P2PManager {
   }
 
   Future<WifiP2PGroupInfo?> groupInfo() async {
-    return _flutterP2pConnectionPlugin.groupInfo();
+    var result = await _flutterP2pConnectionPlugin.groupInfo();
+    if (result == null) {
+      var wifi = await Permission.nearbyWifiDevices.status;
+      var location = await Permission.location.status;
+
+      if (wifi.isDenied) await Permission.nearbyWifiDevices.request();
+      if (location.isLimited) await Permission.location.request();
+
+      if (!await _flutterP2pConnectionPlugin.checkLocationEnabled()) {
+        _flutterP2pConnectionPlugin.enableLocationServices();
+      }
+    }
+    return result;
   }
 
   Future<bool> disconnect() async {
     final a = await _flutterP2pConnectionPlugin.removeGroup();
     final b = _closeSocketConnection();
     return a && b;
-    
   }
 
   Future<bool> discover() async {

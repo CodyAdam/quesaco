@@ -57,13 +57,20 @@ class _WaitingPageState extends State<WaitingPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Text(
-                        'Connectée à la room ${info != null ? info!.groupNetworkName : "?"}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w300,
-                        )),
-                    const Spacer(),
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            right: 16.0), // Added this line
+                        child: Text(
+                          ' ${info != null ?  "Room de ${info!.groupNetworkName}" : "En attente de l'acceptation de l'hôte"}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ),
                     ElevatedButton(
                       onPressed: onRefresh,
                       child: const Text('Actualiser'),

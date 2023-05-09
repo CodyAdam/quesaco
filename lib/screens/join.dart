@@ -28,10 +28,7 @@ class _JoinPageState extends State<JoinPage> {
   Future init() async {
     await p2p.init();
     await p2p.discover();
-    List<DiscoveredPeers> p = await p2p.getPeers();
-    setState(() {
-      peers = p;
-    });
+    await onRefresh();
   }
 
   @override
@@ -43,7 +40,7 @@ class _JoinPageState extends State<JoinPage> {
     super.dispose();
   }
 
-  void onRefresh() async {
+  Future onRefresh() async {
     await p2p.disconnect();
     List<DiscoveredPeers> p = await p2p.getPeers();
     setState(() {
@@ -56,7 +53,7 @@ class _JoinPageState extends State<JoinPage> {
     if (!mounted) return;
     if (success) {
       shouldDisconnect = false;
-      Navigator.push(context,
+      Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => const WaitingPage()));
     }
   }
@@ -77,7 +74,7 @@ class _JoinPageState extends State<JoinPage> {
                   children: [
                     const Text('Les rooms disponibles',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 18,
                           fontWeight: FontWeight.w300,
                         )),
                     const Spacer(),
