@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 
+import '../services/connection_manager.dart';
 import 'host.dart';
 import 'join.dart';
 
-class Menu extends StatelessWidget {
+class Menu extends StatefulWidget {
   const Menu({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MenuState();
+  }
+}
+
+class _MenuState extends State<Menu> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Manager().disconnect();
+    });
+  }
+
+  Future _onNavigateBack() async {
+    await Manager().disconnect();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +57,14 @@ class Menu extends StatelessWidget {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.lime)),
-                    onPressed: () {
+                    onPressed: () async {
                       // Navigate
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const HostPage()),
                       );
+                      await _onNavigateBack();
                     },
                     child: const Padding(
                         padding: EdgeInsets.all(20),
@@ -63,13 +84,14 @@ class Menu extends StatelessWidget {
                       style: ButtonStyle(
                           backgroundColor:
                               MaterialStateProperty.all(Colors.green)),
-                      onPressed: () {
+                      onPressed: () async {
                         // Navigate
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const JoinPage()),
                         );
+                        await _onNavigateBack();
                       },
                       child: const Padding(
                           padding: EdgeInsets.all(20),
