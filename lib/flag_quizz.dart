@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,11 @@ class Flag extends StatefulWidget {
 }
 
 class _HomeState extends State<Flag> {
+  late Timer timer;
+  Stopwatch stopwatch = Stopwatch();
+  int timeLimit = 20;
+  String timeRemaining = "";
+
   var list = random();
   bool endOfQuiz = false;
   bool answerWasSelected = false;
@@ -25,10 +31,35 @@ class _HomeState extends State<Flag> {
       answerWasSelected = true;
       if (answerScore) {
         totalScore++;
+      } else {
+        showPopupFor3Seconds();
       }
       if (questionIndex + 1 == list.length) {
         endOfQuiz = true;
       }
+    });
+  }
+
+  void showPopup() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            content: Text(
+              "Mauvais réponse !\nPénalité de 3 secondes !",
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Colors.red,
+          );
+        }
+    );
+  }
+
+  void showPopupFor3Seconds() {
+    showPopup();
+    Timer(const Duration(seconds: 3), () {
+      Navigator.of(context).pop();
     });
   }
 
@@ -47,8 +78,41 @@ class _HomeState extends State<Flag> {
       questionIndex = 0;
       totalScore = 0;
       endOfQuiz = false;
+      timeLimit = 20;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
+    stopwatch.start();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  void onTimerTick(Timer timer) {
+    if (stopwatch.isRunning) {
+      setState(() {
+        timeRemaining = formatDuration(stopwatch.elapsed);
+      });
+    }
+  }
+
+  String formatDuration(Duration duration) {
+    int remaining = timeLimit-duration.inSeconds.remainder(60);
+    if(remaining<=0) {
+      goToMenu();
+      stopwatch.reset();
+      timeLimit = timeLimit;
+    }
+    return remaining.toString();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +128,10 @@ class _HomeState extends State<Flag> {
       ),
       body: Center(
         child: Column(children: [
+          Text(
+            timeRemaining,
+            textAlign: TextAlign.center,
+          ),
           Container(
             width: 500.0,
             height: 250.0,
@@ -118,7 +186,7 @@ class _HomeState extends State<Flag> {
               },
               child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
           Text(
-            '${totalScore.toString()}/${list.length.toString()}',
+            totalScore.toString(),
             textAlign: TextAlign.center,
           ),
         ]),
@@ -149,7 +217,7 @@ List<List<Pair<String, bool>>> random() {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
   var random = Random();
-  int numberOfQuestions = 10;
+  int numberOfQuestions = 50;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];
     var randomOrder = Random();
@@ -177,6 +245,7 @@ List<String> getGoodOnes(List<List<Pair<String, bool>>> list) {
   }
   return goodList;
 }
+
 
 var map = {
   'ad': 'Andorre',
