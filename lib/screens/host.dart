@@ -82,16 +82,21 @@ class _HostPageState extends State<HostPage> {
                         padding: EdgeInsets.all(12),
                         child: Card(
                           child: ListTile(
-                            title: Text(
-                                "Chargement...\n\n Vérifier que vous avez bien accordée la permission NEARBY_WIFI_DEVICES (Android >=13) ou ACCESS_FINE_LOCATION"),
-                          ),
+                              title: Text("Chargement..."),
+                              subtitle: Text(
+                                "Vérifier que vous avez bien accordée la permission NEARBY_WIFI_DEVICES (Android >=13) ou ACCESS_FINE_LOCATION",
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 205, 202, 202),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300),
+                              )),
                         )),
                   const Spacer(),
                   if (m.groupInfo != null)
                     Column(
                       children: [
                         Text(
-                          "${m.groupInfo!.clients.length + 1}/4 joueurs",
+                          "${m.groupInfo!.clients.length + 1}/2 joueurs",
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w400,

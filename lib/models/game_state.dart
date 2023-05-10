@@ -20,6 +20,16 @@ class GameState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearGamesData() {
+    var minigameId = getInt(MINIGAME_ID);
+    var host = getInt(HOST_USERNAME);
+    var player = getInt(PLAYER_USERNAME);
+    data.clear();
+    setInt(MINIGAME_ID, minigameId ?? 0);
+    setInt(HOST_USERNAME, host ?? 0);
+    setInt(PLAYER_USERNAME, player ?? 0);
+    notifyListeners();
+  }
   void clear() {
     data.clear();
     notifyListeners();

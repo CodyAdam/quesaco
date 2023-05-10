@@ -15,6 +15,7 @@ class Manager extends GameState {
   bool isGameStarted = false;
   String me = PLAYER_USERNAME;
   String other = HOST_USERNAME;
+  bool isSolo = false;
 
   factory Manager() {
     return _instance;
@@ -33,12 +34,15 @@ class Manager extends GameState {
     await p2p.init();
     await p2p.host();
     for (var i = 0; i < 10; i++) {
-      if (await _startSocket()) {
+      if (await _startSocket() || isGameStarted) {
         break;
       }
       await Future.delayed(const Duration(seconds: 1));
     }
     for (var i = 0; i < 10; i++) {
+      if (isGameStarted) {
+        break;
+      }
       await refreshRoom();
       await Future.delayed(const Duration(seconds: 1));
     }
@@ -87,6 +91,10 @@ class Manager extends GameState {
     refreshRoom();
     if (!isConnected || groupInfo == null) return false;
     if (isHost) {
+      await refreshRoom();
+      if (groupInfo!.clients.length == 1) {
+        isSolo = true;
+      }
       sendMessage("start");
       isGameStarted = true;
       init();
