@@ -154,13 +154,9 @@ class _HomeState extends State<Flag> {
               answerText: map[answer.country],
               answerTap: () {
                 if (answerWasSelected) {
-                  print(answer.country.compareTo(answers[questionIndex])==0);
-                  print(answers);
-                  print(answer.country);
                   return;
                 }
                 questionAnswered(answer.goodOne, answer.country);
-                print(answer.country.compareTo(answers[questionIndex])==0);
               },
               answerColor: answerWasSelected
                   ? answer.goodOne

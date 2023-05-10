@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:quesaco/answer.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class Music extends StatefulWidget {
   const Music({super.key});
@@ -17,17 +18,20 @@ class _HomeState extends State<Music> {
   int timeLimit = 15;
   String timeRemaining = "";
 
+  AudioPlayer audioPlayer = AudioPlayer();
+  AudioCache audioCache = AudioCache();
+
   var list = random();
   bool endOfQuiz = false;
   bool answerWasSelected = false;
   int totalScore = 0;
   int questionIndex = 0;
   bool taped = false;
-  List<String> answers = [];
+  List<String> answers = List<String>.filled(map.length, "");
 
   void questionAnswered(bool answerScore, String answerMusic) {
     setState(() {
-      answers.add(answerMusic);
+      answers[questionIndex] = answerMusic;
       answerWasSelected = true;
       if (answerScore) {
         totalScore++;
@@ -46,6 +50,7 @@ class _HomeState extends State<Music> {
     if (questionIndex >= list.length) {
       goToMenu();
     }
+    audioPlayer.stop();
   }
 
   void goToMenu() {
@@ -73,31 +78,49 @@ class _HomeState extends State<Music> {
   void onTimerTick(Timer timer) {
     if (stopwatch.isRunning) {
       setState(() {
-        timeRemaining = formatDuration(stopwatch.elapsed);
+        if(timeLimit-stopwatch.elapsed.inSeconds.remainder(60) < 0) {
+          timeRemaining = "0";
+        } else {
+          timeRemaining = formatDuration(stopwatch.elapsed);
+        }
       });
     }
   }
 
   void pause(int seconds) async {
     await Future.delayed(Duration(seconds: seconds));
-    nextQuestion();
-    stopwatch.stop();
     stopwatch.reset();
+    nextQuestion();
   }
 
   String formatDuration(Duration duration) {
     int remaining = timeLimit-duration.inSeconds.remainder(60);
     if(remaining<=0) {
-      stopwatch.stop();
+      if(answers[questionIndex] == "") {
+        questionAnswered(false, "");
+      }
       pause(3);
     }
     return remaining.toString();
+  }
+
+  void loadAndPlayMusic(String music) async {
+    print(music);
+    if(audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await audioCache.load(music);
+
+    audioPlayer.play(AssetSource(music));
   }
 
 
   @override
   Widget build(BuildContext context) {
     var goodList = getGoodOnes(list);
+    print(goodList);
+
+    loadAndPlayMusic('musics/${goodList[questionIndex]}.mp3');
 
     return Scaffold(
       appBar: AppBar(
@@ -133,21 +156,17 @@ class _HomeState extends State<Music> {
           ),
           ...list[questionIndex].map(
             (answer) => Answer(
-              answerText: map[answer.country],
+              answerText: map[answer.game],
               answerTap: () {
                 if (answerWasSelected) {
-                  print(answer.country.compareTo(answers[questionIndex])==0);
-                  print(answers);
-                  print(answer.country);
                   return;
                 }
-                questionAnswered(answer.goodOne, answer.country);
-                print(answer.country.compareTo(answers[questionIndex])==0);
+                questionAnswered(answer.goodOne, answer.game);
               },
               answerColor: answerWasSelected
                   ? answer.goodOne
                       ? Colors.green
-                      : answer.country.compareTo(answers[questionIndex])==0
+                      : answer.game.compareTo(answers[questionIndex])==0
                           ? Colors.red
                           : null
                   : null,
@@ -156,16 +175,6 @@ class _HomeState extends State<Music> {
           const SizedBox(
             height: 20.0,
           ),
-          // ElevatedButton(
-          //     style: ElevatedButton.styleFrom(
-          //         minimumSize: const Size(100.0, 40.0)),
-          //     onPressed: () {
-          //       if (!answerWasSelected) {
-          //         return;
-          //       }
-          //       nextQuestion();
-          //     },
-          //     child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
           Text(
             totalScore.toString(),
             textAlign: TextAlign.center,
@@ -182,9 +191,9 @@ class Pair<A, B> {
 
   Pair(this._country, this._goodOne);
 
-  A get country => _country;
+  A get game => _country;
 
-  set country(A value) => _country = value;
+  set game(A value) => _country = value;
 
   B get goodOne => _goodOne;
 
@@ -220,7 +229,7 @@ List<String> getGoodOnes(List<List<Pair<String, bool>>> list) {
   for (List l in list) {
     for (Pair p in l) {
       if (p.goodOne) {
-        goodList.add(p.country);
+        goodList.add(p.game);
       }
     }
   }
@@ -229,54 +238,54 @@ List<String> getGoodOnes(List<List<Pair<String, bool>>> list) {
 
 
 var map = {
-  'Age of Empire 2': 'Age of Empire 2',
-  'Animal Crossing New Horizons' : 'Animal Crossing : New Horizons',
-  'Assassin\'s Creed 2' : 'Assassin\'s Creed 2',
-  'Banjo-Kazooie' : 'Banjo-Kazooie',
+  'Age_of_Empire_2': 'Age of Empire 2',
+  'Animal_Crossing_New_Horizons' : 'Animal Crossing : New Horizons',
+  'Assassins_Creed_2' : 'Assassin\'s Creed 2',
+  'Banjo_Kazooie' : 'Banjo-Kazooie',
   'Castlevania' : 'Castlevania',
-  'Civilization 4' : 'Civilization 4',
-  'Crash Bandicoot' : 'Crash Bandicoot',
-  'Dark Souls' : 'Dark Souls',
-  'Donkey Kong Country' : 'Donkey Kong Country',
+  'Civilization_4' : 'Civilization 4',
+  'Crash_Bandicoot' : 'Crash Bandicoot',
+  'Dark_Souls' : 'Dark Souls',
+  'Donkey_Kong_Country' : 'Donkey Kong Country',
   'Doom' : 'Doom',
-  'F-Zero' : 'F-Zero',
-  'Final Fantasy VII' : 'Final Fantasy VII',
-  'Final Fantasy X' : 'Final Fantasy X',
-  'GTA San Andreas' : 'GTA San Andreas',
-  'Halo 2' : 'Halo 2',
-  'Kingdom Hearts' : 'Kingdom Hearts',
-  'Kirby Superstar' : 'Kirby Superstar',
-  'Luigi\'s Mansion' : 'Luigi\'s Mansion',
-  'Mario Kart 8' : 'Mario Kart 8',
-  'Mega Man 2' : 'Mega Man 2',
-  'Metal Gear Solid' : 'Metal Gear Solid',
-  'Metroid Prime' : 'Metroid Prime',
+  'F_Zero' : 'F-Zero',
+  'Final_Fantasy_VII' : 'Final Fantasy VII',
+  'Final_Fantasy_X' : 'Final Fantasy X',
+  'GTA_San_Andreas' : 'GTA San Andreas',
+  'Halo_2' : 'Halo 2',
+  'Kingdom_Hearts' : 'Kingdom Hearts',
+  'Kirby_Superstar' : 'Kirby Superstar',
+  'Luigis_Mansion' : 'Luigi\'s Mansion',
+  'Mario_Kart_8' : 'Mario Kart 8',
+  'Mega_Man_2' : 'Mega Man 2',
+  'Metal_Gear_Solid' : 'Metal Gear Solid',
+  'Metroid_Prime' : 'Metroid Prime',
   'Minecraft' : 'Minecraft',
-  'Mortal Kombat' : 'Mortal Kombat',
-  'Persona 5' : 'Persona 5',
-  'Phoenix Wright Ace Attorney' : 'Phoenix Wright : Ace Attorney',
-  'Pokémon Diamant-Perle' : 'Pokémon Diamant/Perle',
-  'Pokémon Rouge-Bleu' : 'Pokémon Rouge/Bleu',
+  'Mortal_Kombat' : 'Mortal Kombat',
+  'Persona_5' : 'Persona 5',
+  'Phoenix_Wright_Ace_Attorney' : 'Phoenix Wright : Ace Attorney',
+  'Pokemon_Diamant_Perle' : 'Pokémon Diamant/Perle',
+  'Pokemon_Rouge_Bleu' : 'Pokémon Rouge/Bleu',
   'Portal' : 'Portal',
-  'Professeur Layton and the Curious Village' : 'Professeur Layton and the Curious Village',
+  'Professeur_Layton_and_the_Curious_Village' : 'Professeur Layton and the Curious Village',
   'Punch-Out!!' : 'Punch-Out!!',
-  'Ratchet & Clank' : 'Ratchet & Clank',
-  'Shadow of the Colossus' : 'Shadow of the Colossus',
-  'Sonic The Hedgehog' : 'Sonic The Hedgehog',
-  'Spyro the Dragon' : 'Spyro the Dragon',
-  'Star Fox' : 'Star Fox',
-  'Street Fighter 2' : 'Street Fighter 2',
-  'Super Mario Bros' : 'Super Mario Bros',
-  'Super Mario Odyssey' : 'Super Mario Odyssey',
-  'Super Mario 64' : 'Super Mario 64',
-  'Team Fortress 2' : 'Team Fortress 2',
+  'Ratchet_e_Clank' : 'Ratchet & Clank',
+  'Shadow_of_the_Colossus' : 'Shadow of the Colossus',
+  'Sonic_The_Hedgehog' : 'Sonic The Hedgehog',
+  'Spyro_the_Dragon' : 'Spyro the Dragon',
+  'Star_Fox' : 'Star Fox',
+  'Street_Fighter_2' : 'Street Fighter 2',
+  'Super_Mario_Bros' : 'Super Mario Bros',
+  'Super_Mario_Odyssey' : 'Super Mario Odyssey',
+  'Super_Mario_64' : 'Super Mario 64',
+  'Team_Fortress_2' : 'Team Fortress 2',
   'Tetris' : 'Tetris',
-  'The Elder Scrolls V Skyrim' : 'The Elder Scrolls V : Skyrim',
-  'The Last of Us' : 'The Last of Us',
-  'The Legend Of Zelda' : 'The Legend Of Zelda',
-  'The Legend of Zelda Ocarina of Time' : 'The Legend of Zelda : Ocarina of Time',
-  'The Witcher 3' : 'The Witcher 3',
-  'Uncharted 2' : 'Uncharted 2',
+  'The_Elder_Scrolls_V_Skyrim' : 'The Elder Scrolls V : Skyrim',
+  'The_Last_of_Us' : 'The Last of Us',
+  'The_Legend_of_Zelda' : 'The Legend Of Zelda',
+  'The_Legend_of_Zelda_Ocarina_of_Time' : 'The Legend of Zelda : Ocarina of Time',
+  'The_Witcher_3' : 'The Witcher 3',
+  'Uncharted_2' : 'Uncharted 2',
   'Undertale' : 'Undertale',
-  'Wii Sports' : 'Wii Sports'
+  'Wii_Sports' : 'Wii Sports'
 };
