@@ -69,7 +69,7 @@ class _MenuState extends State<Menu> {
                     child: const Padding(
                         padding: EdgeInsets.all(20),
                         child: Text(
-                          'Créer une room',
+                          'Créer une room / Solo',
                           style: TextStyle(fontSize: 28),
                         )),
                   ),
