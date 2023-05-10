@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quesaco/flag_quizz.dart';
+import 'package:quesaco/music_quizz.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const Flag(),
+      home: const Music(),
     );
   }
 }

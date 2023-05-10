@@ -108,7 +108,6 @@ class _HomeState extends State<Flag> {
     if(remaining<=0) {
       goToMenu();
       stopwatch.reset();
-      timeLimit = timeLimit;
     }
     return remaining.toString();
   }

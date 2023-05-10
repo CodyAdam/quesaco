@@ -53,7 +53,7 @@ class _HomeState extends State<Music> {
       questionIndex = 0;
       totalScore = 0;
       endOfQuiz = false;
-      timeLimit = 20;
+      timeLimit = 15;
     });
   }
 
@@ -78,12 +78,18 @@ class _HomeState extends State<Music> {
     }
   }
 
+  void pause(int seconds) async {
+    await Future.delayed(Duration(seconds: seconds));
+    nextQuestion();
+    stopwatch.stop();
+    stopwatch.reset();
+  }
+
   String formatDuration(Duration duration) {
     int remaining = timeLimit-duration.inSeconds.remainder(60);
     if(remaining<=0) {
-      goToMenu();
-      stopwatch.reset();
-      timeLimit = timeLimit;
+      stopwatch.stop();
+      pause(3);
     }
     return remaining.toString();
   }
@@ -150,16 +156,16 @@ class _HomeState extends State<Music> {
           const SizedBox(
             height: 20.0,
           ),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(100.0, 40.0)),
-              onPressed: () {
-                if (!answerWasSelected) {
-                  return;
-                }
-                nextQuestion();
-              },
-              child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
+          // ElevatedButton(
+          //     style: ElevatedButton.styleFrom(
+          //         minimumSize: const Size(100.0, 40.0)),
+          //     onPressed: () {
+          //       if (!answerWasSelected) {
+          //         return;
+          //       }
+          //       nextQuestion();
+          //     },
+          //     child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
           Text(
             totalScore.toString(),
             textAlign: TextAlign.center,
@@ -228,7 +234,7 @@ var map = {
   'Assassin\'s Creed 2' : 'Assassin\'s Creed 2',
   'Banjo-Kazooie' : 'Banjo-Kazooie',
   'Castlevania' : 'Castlevania',
-  'Civilization 4' : 'Civilization 4.mp3',
+  'Civilization 4' : 'Civilization 4',
   'Crash Bandicoot' : 'Crash Bandicoot',
   'Dark Souls' : 'Dark Souls',
   'Donkey Kong Country' : 'Donkey Kong Country',
