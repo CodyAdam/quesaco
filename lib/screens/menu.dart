@@ -17,8 +17,8 @@ class _MenuState extends State<Menu> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Manager().disconnect();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Manager().disconnect();
     });
   }
 

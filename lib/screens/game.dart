@@ -14,49 +14,92 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  nextMinigame(GameState game) {
-    game.setInt(MINIGAME_ID, game.getInt(MINIGAME_ID)! + 1);
+  @override
+  void initState() {
+    super.initState();
   }
 
-  addPointToPlayer(GameState game, String playerName, int amount) {
-    game.setInt(playerName, game.getInt(playerName)! + 1);
+  void selectGame(GameState game, int id) {
+    game.setInt(MINIGAME_ID, id);
+  }
+
+  Card _buildCardButton(BuildContext context, int id, String imagePath) {
+    final game = Provider.of<Manager>(context, listen: false);
+    return Card(
+      child: InkWell(
+        onTap: () => selectGame(game, id),
+        child: Image.asset(imagePath, fit: BoxFit.cover),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<Manager>(builder: (context, m, child) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("Minigame ${m.getInt(MINIGAME_ID)}"),
-        ),
-        body: Center(
-          child: Column(
-            // fill height
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text("Minigame id : ${m.getInt(MINIGAME_ID)}"),
-              Text("My score : ${m.getInt(m.me)}"),
-              Text("Other score : ${m.getInt(m.other)}"),
-              ButtonBar(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => nextMinigame(m),
-                    child: const Text('Next minigame (+1)'),
-                  ),
-                ],
-              ),
-              ButtonBar(
-                children: [
-                  ElevatedButton(
-                    onPressed: () => addPointToPlayer(m, m.me, 1),
-                    child: const Text('Add points to me (+1)'),
-                  ),
-                ],
-              ),
-            ],
+    return Consumer<Manager>(builder: (context, game, child) {
+      if (game.getInt(MINIGAME_ID) == 1) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text("Minigame ${game.getInt(MINIGAME_ID)}"),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Text("Game 1"));
+      } else if (game.getInt(MINIGAME_ID) == 2) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text("Minigame ${game.getInt(MINIGAME_ID)}"),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Text("Game 2"));
+      } else if (game.getInt(MINIGAME_ID) == 3) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text("Minigame ${game.getInt(MINIGAME_ID)}"),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Text("Game 3"));
+      } else if (game.getInt(MINIGAME_ID) == 4) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text("Minigame ${game.getInt(MINIGAME_ID)}"),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Text("Game 4"));
+      } else if (game.getInt(MINIGAME_ID) == 5) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text("Minigame ${game.getInt(MINIGAME_ID)}"),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Text("Game 5"));
+      } else if (game.getInt(MINIGAME_ID) == 6) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text("Minigame ${game.getInt(MINIGAME_ID)}"),
+              automaticallyImplyLeading: false,
+            ),
+            body: const Text("Game 6"));
+      } else {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Selectionnez un jeu"),
           ),
-        ),
-      );
+          body: Center(
+            child: GridView.builder(
+              itemCount: 6,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return _buildCardButton(context, index + 1,
+                    'assets/images/thumb_game_${index + 1}.png');
+              },
+            ),
+          ),
+        );
+      }
     });
   }
 }
