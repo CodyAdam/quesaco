@@ -1,20 +1,20 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:quesaco/models/game_state.dart';
 
 import 'p2p.dart';
 
-class Manager extends ChangeNotifier {
+class Manager extends GameState {
   static final Manager _instance = Manager._internal();
   final p2p = P2PManager();
   WifiP2PGroupInfo? groupInfo;
   bool isHost = false;
   List<DiscoveredPeers> peers = [];
   bool isConnected = false;
-  GameState? gameState;
-  String me = "?";
+  bool isGameStarted = false;
+  String me = PLAYER_USERNAME;
+  String other = HOST_USERNAME;
 
   factory Manager() {
     return _instance;
@@ -22,16 +22,12 @@ class Manager extends ChangeNotifier {
 
   Manager._internal();
 
-  void _onGameStateChange() {
-    if (gameState == null) return;
-    sendMessage(gameState.toString());
-  }
-
   // Initialize and manage the connection and messaging here
   // Inside ConnectionManager
   Future createRoom() async {
     if (!p2p.isInit) p2p.init();
-    me = await p2p.plugin.getDeviceModel() ?? "?";
+    me = HOST_USERNAME;
+    other = PLAYER_USERNAME;
     isHost = true;
     isConnected = false;
     await p2p.init();
@@ -62,7 +58,8 @@ class Manager extends ChangeNotifier {
 
   Future<bool> joinRoom(DiscoveredPeers peer) async {
     if (!p2p.isInit) p2p.init();
-    me = await p2p.plugin.getDeviceModel() ?? "?";
+    me = PLAYER_USERNAME;
+    other = HOST_USERNAME;
     await p2p.disconnect();
     final connectedRoom = await p2p.connect(peer);
     if (!connectedRoom) {
@@ -90,12 +87,9 @@ class Manager extends ChangeNotifier {
     refreshRoom();
     if (!isConnected || groupInfo == null) return false;
     if (isHost) {
-      var players = groupInfo!.clients.map((e) => e.deviceName).toList();
-      // add host as player
-      players.add(me);
-      gameState = GameState.init(players);
-      sendMessage(gameState.toString());
-      gameState!.addListener(_onGameStateChange);
+      sendMessage("start");
+      isGameStarted = true;
+      init();
       notifyListeners();
       return true;
     }
@@ -166,25 +160,72 @@ class Manager extends ChangeNotifier {
 
   Future disconnect() async {
     log("Disconnecting...");
-    gameState?.removeListener(_onGameStateChange);
-    gameState = null;
     await p2p.disconnect();
     await p2p.stopDiscover();
+    isConnected = false;
+    isGameStarted = false;
+    groupInfo = null;
+    peers = [];
+    clear();
     notifyListeners();
   }
 
   // Inside ConnectionManager
-  void sendMessage(String message) {
-    log("Sending message: $message");
-    p2p.plugin.sendStringToSocket(message);
+  void sendMessage(String msg) {
+    log("Sending message: $msg");
+    p2p.plugin.sendStringToSocket(msg);
     notifyListeners();
   }
 
-  void _onReceiveMessage(dynamic message) async {
-    log("Received message: $message");
-    gameState?.removeListener(_onGameStateChange);
-    gameState = GameState.from(message);
-    gameState!.addListener(_onGameStateChange);
+  @override
+  void set(String key, String value) {
+    sendKeyValue(key, value);
+    super.set(key, value);
     notifyListeners();
+  }
+
+  @override
+  void setInt(String key, int value) {
+    sendKeyValue(key, value.toString());
+    super.setInt(key, value);
+    notifyListeners();
+  }
+
+  @override
+  void setBool(String key, bool value) {
+    sendKeyValue(key, value.toString());
+    super.setBool(key, value);
+    notifyListeners();
+  }
+
+  @override
+  void setDouble(String key, double value) {
+    sendKeyValue(key, value.toString());
+    super.setDouble(key, value);
+    notifyListeners();
+  }
+
+  // Inside ConnectionManager
+  void sendKeyValue(String key, String value) {
+    log("Sending Key value: $key: $value");
+    p2p.plugin.sendStringToSocket("$key:$value");
+  }
+
+  void _onReceiveMessage(dynamic message) async {
+    if (message == "start") {
+      init();
+      isGameStarted = true;
+      notifyListeners();
+      return;
+    }
+    log("Received message: $message");
+    // split
+    var split = message.split(":");
+    if (split.length == 2) {
+      super.set(split[0], split[1]);
+      notifyListeners();
+      return;
+    }
+    log("Error when receiving message (message.split(\":\").length != 2): $message");
   }
 }

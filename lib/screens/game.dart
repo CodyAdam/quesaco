@@ -15,33 +15,32 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> {
   nextMinigame(GameState game) {
-    game.nextMiniGame();
+    game.setInt(MINIGAME_ID, game.getInt(MINIGAME_ID)! + 1);
   }
 
   addPointToPlayer(GameState game, String playerName, int amount) {
-    game.updateScore(playerName, (game.scores[playerName] ?? 0) + amount);
+    game.setInt(playerName, game.getInt(playerName)! + 1);
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<Manager>(builder: (context, m, child) {
-      var game = m.gameState!;
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Menu principal'),
+          title: Text("Minigame ${m.getInt(MINIGAME_ID)}"),
         ),
         body: Center(
           child: Column(
             // fill height
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text("Minigame id : ${game.currentMiniGameIndex}"),
-              Text("Players count : ${game.players.length}"),
-              Text("Scores : ${game.scores.toString()}"),
+              Text("Minigame id : ${m.getInt(MINIGAME_ID)}"),
+              Text("My score : ${m.getInt(m.me)}"),
+              Text("Other score : ${m.getInt(m.other)}"),
               ButtonBar(
                 children: [
                   ElevatedButton(
-                    onPressed: () => nextMinigame(game),
+                    onPressed: () => nextMinigame(m),
                     child: const Text('Next minigame (+1)'),
                   ),
                 ],
@@ -49,7 +48,7 @@ class _GamePageState extends State<GamePage> {
               ButtonBar(
                 children: [
                   ElevatedButton(
-                    onPressed: () => addPointToPlayer(game, m.me, 1),
+                    onPressed: () => addPointToPlayer(m, m.me, 1),
                     child: const Text('Add points to me (+1)'),
                   ),
                 ],

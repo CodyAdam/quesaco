@@ -1,56 +1,79 @@
-import 'dart:convert';
+// ignore_for_file: constant_identifier_names
 
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-part 'game_state.g.dart';
+const String HOST_USERNAME = "Host";
+const String PLAYER_USERNAME = "Player";
+const String MINIGAME_ID = "MinigameId";
 
-@JsonSerializable()
 class GameState extends ChangeNotifier {
-  @JsonKey()
-  int currentMiniGameIndex = 0;
-  Map<String, int> scores = {};
-  List<String> players = [];
+  Map<String, String> data = {};
 
   GameState(); // Empty constructor for json_serializable
 
-  GameState.init(this.players) {
-    _initializeScores();
-  }
-
-  void _initializeScores() {
-    for (var player in players) {
-      scores[player] = 0;
-    }
-  }
-
-  void updateScore(String playerId, int newScore) {
-    scores[playerId] = newScore;
+  void init() {
+    setInt(HOST_USERNAME, 0);
+    setInt(PLAYER_USERNAME, 0);
+    setInt(MINIGAME_ID, 1);
     notifyListeners();
   }
 
-  void nextMiniGame() {
-    currentMiniGameIndex++;
+  void clear() {
+    data.clear();
     notifyListeners();
   }
 
-  void resetGameState() {
-    currentMiniGameIndex = 0;
-    _initializeScores();
+  void set(String key, String value) {
+    data[key] = value;
     notifyListeners();
   }
 
-  factory GameState.fromJson(Map<String, dynamic> json) =>
-      _$GameStateFromJson(json);
-  Map<String, dynamic> toJson() => _$GameStateToJson(this);
-
-  @override
-  String toString() {
-    return jsonEncode(toJson());
+  void setInt(String key, int value) {
+    data[key] = value.toString();
+    notifyListeners();
   }
 
-  factory GameState.from(String jsonString) {
-    return GameState.fromJson(jsonDecode(jsonString));
+  void setBool(String key, bool value) {
+    data[key] = value.toString();
+    notifyListeners();
+  }
+
+  void setDouble(String key, double value) {
+    data[key] = value.toString();
+    notifyListeners();
+  }
+
+  void setNull(String key) {
+    // remove key from map
+    data.remove(key);
+    notifyListeners();
+  }
+
+  int? getInt(String key) {
+    // parse int, or return null
+    var value = data[key];
+    if (value == null) return null;
+    return int.tryParse(value);
+  }
+
+  double? getDouble(String key) {
+    // parse double, or return null
+    var value = data[key];
+    if (value == null) return null;
+    return double.tryParse(value);
+  }
+
+  bool? getBool(String key) {
+    // parse bool, or return null
+    var value = data[key];
+    if (value == null) return null;
+    return value == "true";
+  }
+
+  String? getString(String key) {
+    // parse string, or return null
+    return data[key];
   }
 }

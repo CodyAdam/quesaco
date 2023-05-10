@@ -25,7 +25,7 @@ class _WaitingPageState extends State<WaitingPage> {
         title: const Text('Salle d\'attente'),
       ),
       body: Consumer<Manager>(builder: (context, m, child) {
-        if (m.gameState != null) {
+        if (m.isGameStarted) {
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const GamePage()));

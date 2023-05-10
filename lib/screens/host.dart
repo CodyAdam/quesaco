@@ -33,7 +33,7 @@ class _HostPageState extends State<HostPage> {
         ),
         body: Consumer<Manager>(
           builder: (context, m, child) {
-            if (m.gameState != null) {
+            if (m.isGameStarted) {
               Future.delayed(Duration.zero, () {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) => const GamePage()));
