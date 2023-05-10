@@ -1,6 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
@@ -14,9 +13,10 @@ class GameState extends ChangeNotifier {
   GameState(); // Empty constructor for json_serializable
 
   void init() {
+    clear();
     setInt(HOST_USERNAME, 0);
     setInt(PLAYER_USERNAME, 0);
-    setInt(MINIGAME_ID, 1);
+    setInt(MINIGAME_ID, 0);
     notifyListeners();
   }
 

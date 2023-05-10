@@ -84,9 +84,38 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Catchy Melody
+    - family: Josefa Rounded
       fonts:
-        - asset: assets/fonts/CatchyMelodyRegular.ttf
+        - asset: assets/fonts/JosefaRoundedThin.ttf
+          weight: 100
+        - asset: assets/fonts/JosefaRoundedThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/JosefaRoundedExtraLight.ttf
+          weight: 100
+        - asset: assets/fonts/JosefaRoundedXtraLightItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/JosefaRoundedLight.ttf
+          weight: 300
+        - asset: assets/fonts/JosefaRoundedLightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/JosefaRoundedMedium.ttf
+          weight: 500
+        - asset: assets/fonts/JosefaRoundedMediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/JosefaRoundedBold.ttf
+          weight: 700
+        - asset: assets/fonts/JosefaRoundedBoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/JosefaRoundedBlack.ttf
+          weight: 900
+        - asset: assets/fonts/JosefaRoundedBlackItalic.ttf
+          weight: 900
+          style: italic
 
   #
   # For details regarding fonts from package dependencies,

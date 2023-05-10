@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       create: (context) => Manager(),
       child: MaterialApp(
         title: 'Multiplayer Game',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: ThemeData(primarySwatch: Colors.blue, fontFamily: "Josefa Rounded"),
         home: const Menu(),
       ),
     );
