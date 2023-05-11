@@ -7,31 +7,31 @@ import 'dart:ui';
 const Offset GRAVITY = Offset(0, -9.8);
 const double WORLD_HEIGHT = 16.0;
 
-enum FruitType { idiot, love, laught, angry }
+enum EmojiType { idiot, love, laught, angry }
 
-extension FruitTypeUtil on FruitType {
+extension EmojiTypeUtil on EmojiType {
   Size get unitSize {
     switch (this) {
-      case FruitType.idiot:
+      case EmojiType.idiot:
         return const Size(2, 2);
-      case FruitType.love:
+      case EmojiType.love:
         return const Size(2, 2);
-      case FruitType.laught:
+      case EmojiType.laught:
         return const Size(2, 2);
-      case FruitType.angry:
+      case EmojiType.angry:
         return const Size(2, 2);
     }
   }
 
   String get imageFile {
     switch (this) {
-      case FruitType.idiot:
+      case EmojiType.idiot:
         return "assets/emoji/laid.png";
-      case FruitType.love:
+      case EmojiType.love:
         return "assets/emoji/amoureux.png";
-      case FruitType.laught:
+      case EmojiType.laught:
         return "assets/emoji/en-riant.png";
-      case FruitType.angry:
+      case EmojiType.angry:
         return "assets/emoji/en-colere.png";
     }
   }
@@ -44,7 +44,7 @@ class Emoji {
   final Key key = UniqueKey();
   final int createdMS;
   final FlightPath flightPath;
-  final FruitType type;
+  final EmojiType type;
 
   Emoji({required this.createdMS, required this.flightPath, required this.type});
 }
@@ -53,7 +53,7 @@ class EmojiSliced {
   final Key key = UniqueKey();
   final List<Offset> slice;
   final FlightPath flightPath;
-  final FruitType type;
+  final EmojiType type;
 
   EmojiSliced({required this.slice, required this.flightPath, required this.type});
 }

@@ -32,8 +32,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
   late Offset sliceBeginPosition;
   late Offset sliceEnd;
 
-  int sliced = 0;
-  int notSliced = 0;
+  int score = 0;
 
   @override
   void initState() {
@@ -48,7 +47,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
                 angularVelocity: .3 + r.nextDouble() * 3.0,
                 position: Offset(2.0 + r.nextDouble() * (widget.worldSize.width - 4.0), 1.0),
                 velocity: Offset(-1.0 + r.nextDouble() * 2.0, 7.0 + r.nextDouble() * 7.0)),
-            type: FruitType.values[r.nextInt(FruitType.values.length)]));
+            type: EmojiType.values[r.nextInt(EmojiType.values.length)]));
       });
     });
   }
@@ -75,7 +74,6 @@ class EmojiWidgetState extends State<EmojiWidget> {
         onOffScreen: () {
           setState(() {
             emoji.remove(e);
-            notSliced++;
           });
         },
       ));
@@ -119,19 +117,12 @@ class EmojiWidgetState extends State<EmojiWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Column(children: [
-                          const Text("Sliced"),
+                          const Text("Score"),
                           const SizedBox(
                             height: 8,
                           ),
-                          Text("$sliced")
+                          Text("$score")
                         ]),
-                        Column(children: [
-                          const Text("Not Sliced"),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text("$notSliced")
-                        ])
                       ],
                     )
                   ],
@@ -188,7 +179,13 @@ class EmojiWidgetState extends State<EmojiWidget> {
                     type: e.type));
               }
             }
-            sliced += toRemove.length;
+            for(Emoji e in toRemove) {
+              if(e.type == EmojiType.love) {
+                score -= 1;
+              } else {
+                score += 1;
+              }
+            }
             emoji.removeWhere((e) => toRemove.contains(e));
           });
         }
