@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:quesaco/widget/answer.dart';
 
+import '../services/connection_manager.dart';
+
 class Flag extends StatefulWidget {
   const Flag({super.key});
 
@@ -17,10 +19,11 @@ class _HomeState extends State<Flag> {
   int timeLimit = 60;
   String timeRemaining = "";
 
+  Manager m = Manager();
+
   var list = random();
   bool endOfQuiz = false;
   bool answerWasSelected = false;
-  int totalScore = 0;
   int questionIndex = 0;
   bool taped = false;
   List<String> answers = [];
@@ -30,7 +33,7 @@ class _HomeState extends State<Flag> {
       answers.add(answerCountry);
       answerWasSelected = true;
       if (answerScore) {
-        totalScore++;
+        m.setInt(m.me, m.getInt(m.me)!+1);
       } else {
         showPopupFor3Seconds();
       }
@@ -76,7 +79,7 @@ class _HomeState extends State<Flag> {
   void goToMenu() {
     setState(() {
       questionIndex = 0;
-      totalScore = 0;
+      //totalScore = 0;
       endOfQuiz = false;
       timeLimit = 20;
     });
@@ -118,13 +121,6 @@ class _HomeState extends State<Flag> {
     var goodList = getGoodOnes(list);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Flag quiz',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
       body: Center(
         child: Column(children: [
           Text(
@@ -133,7 +129,7 @@ class _HomeState extends State<Flag> {
           ),
           Container(
             width: 500.0,
-            height: 250.0,
+            height: 220.0,
             margin: const EdgeInsets.only(
                 bottom: 10.0, top: 20.0, left: 30.0, right: 30.0),
             padding:
@@ -142,7 +138,7 @@ class _HomeState extends State<Flag> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 image: DecorationImage(
-                  image: AssetImage('assets/${goodList[questionIndex]}.png'),
+                  image: AssetImage('assets/flags/${goodList[questionIndex]}.png'),
                   fit: BoxFit.scaleDown,
                 )),
           ),
@@ -180,10 +176,6 @@ class _HomeState extends State<Flag> {
                 nextQuestion();
               },
               child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
-          Text(
-            totalScore.toString(),
-            textAlign: TextAlign.center,
-          ),
         ]),
       ),
     );

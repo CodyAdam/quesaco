@@ -38,7 +38,7 @@ class _GamePageState extends State<GamePage> {
           if (id == 1) {
             return Scaffold(
                 appBar: AppBar(
-                  title: Text("Minigame $id"),
+                  title: const Text("Quel est ce pays ?"),
                   automaticallyImplyLeading: false,
                 ),
                 body: const Flag(),
@@ -46,7 +46,7 @@ class _GamePageState extends State<GamePage> {
           } else if (id == 2) {
             return Scaffold(
                 appBar: AppBar(
-                  title: Text("Minigame $id"),
+                  title: const Text("Quel est ce jeu vidéo ?"),
                   automaticallyImplyLeading: false,
                 ),
                 body: const Music(),
@@ -61,10 +61,6 @@ class _GamePageState extends State<GamePage> {
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 5) {
             return Scaffold(
-                appBar: AppBar(
-                  title: Text("Minigame $id"),
-                  automaticallyImplyLeading: false,
-                ),
                 body: EmojiGame(),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 6) {
