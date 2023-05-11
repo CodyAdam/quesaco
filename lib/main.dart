@@ -47,7 +47,10 @@ class MenuObserver extends NavigatorObserver {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    onMenuPagePush();
+    if(route is PopupRoute) {
+    } else {
+      onMenuPagePush();
+    }
     super.didPop(route, previousRoute);
   }
 }

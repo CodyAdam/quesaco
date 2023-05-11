@@ -115,7 +115,6 @@ class _HomeState extends State<Music> {
     m.audioPlayer.play(AssetSource(music));
   }
 
-
   @override
   Widget build(BuildContext context) {
     var goodList = getGoodOnes(list);
@@ -124,13 +123,6 @@ class _HomeState extends State<Music> {
     loadAndPlayMusic('musics/${goodList[questionIndex]}.mp3');
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Flag quiz',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
       body: Center(
         child: Column(children: [
           Text(
@@ -148,7 +140,7 @@ class _HomeState extends State<Music> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 image: const DecorationImage(
-                  image: AssetImage('assets/orateur.png'),
+                  image: AssetImage('assets/flags/orateur.png'),
                   fit: BoxFit.scaleDown,
                 )),
           ),
