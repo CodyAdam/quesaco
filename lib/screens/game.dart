@@ -1,8 +1,12 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quesaco/games/game3.dart';
+import 'package:quesaco/games/music_quizz.dart';
 
+import '../games/emoji_widget.dart';
+import '../games/flag_quizz.dart';
 import '../games/game4.dart';
 import '../models/game_state.dart';
 import '../services/connection_manager.dart';
@@ -28,13 +32,16 @@ class _GamePageState extends State<GamePage> {
     return Selector<Manager, int>(
         selector: (_, m) => m.getInt(MINIGAME_ID) ?? 0,
         builder: (context, id, child) {
+          if(Manager().audioPlayer.state == PlayerState.playing) {
+            Manager().audioPlayer.stop();
+          }
           if (id == 1) {
             return Scaffold(
                 appBar: AppBar(
                   title: Text("Minigame $id"),
                   automaticallyImplyLeading: false,
                 ),
-                body: const Text("Game 1"),
+                body: const Flag(),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 2) {
             return Scaffold(
@@ -42,7 +49,7 @@ class _GamePageState extends State<GamePage> {
                   title: Text("Minigame $id"),
                   automaticallyImplyLeading: false,
                 ),
-                body: const Text("Game 2"),
+                body: const Music(),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 3) {
             return Scaffold(
@@ -58,7 +65,7 @@ class _GamePageState extends State<GamePage> {
                   title: Text("Minigame $id"),
                   automaticallyImplyLeading: false,
                 ),
-                body: const Text("Game 5"),
+                body: EmojiGame(),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 6) {
             return Scaffold(

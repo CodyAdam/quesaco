@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:quesaco/widget/answer.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+import '../services/connection_manager.dart';
+
 class Music extends StatefulWidget {
   const Music({super.key});
 
@@ -18,8 +20,7 @@ class _HomeState extends State<Music> {
   int timeLimit = 15;
   String timeRemaining = "";
 
-  AudioPlayer audioPlayer = AudioPlayer();
-  AudioCache audioCache = AudioCache();
+  Manager m = Manager();
 
   var list = random();
   bool endOfQuiz = false;
@@ -50,7 +51,7 @@ class _HomeState extends State<Music> {
     if (questionIndex >= list.length) {
       goToMenu();
     }
-    audioPlayer.stop();
+    m.audioPlayer.stop();
   }
 
   void goToMenu() {
@@ -106,12 +107,12 @@ class _HomeState extends State<Music> {
 
   void loadAndPlayMusic(String music) async {
     print(music);
-    if(audioPlayer.state == PlayerState.playing) {
+    if(m.audioPlayer.state == PlayerState.playing) {
       return;
     }
-    await audioCache.load(music);
+    await m.audioCache.load(music);
 
-    audioPlayer.play(AssetSource(music));
+    m.audioPlayer.play(AssetSource(music));
   }
 
 
