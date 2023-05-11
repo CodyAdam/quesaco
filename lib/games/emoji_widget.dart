@@ -35,11 +35,42 @@ class EmojiWidgetState extends State<EmojiWidget> {
   late Offset sliceBeginPosition;
   late Offset sliceEnd;
 
+  late Timer timer;
+  Stopwatch stopwatch = Stopwatch();
+  int timeLimit = 60;
+  String timeRemaining = "";
+
   Manager m = Manager();
+
+
+  void goToMenu() {
+    setState(() {
+      m.setInt(m.me, 0);
+    });
+  }
+
+  void onTimerTick(Timer timer) {
+    if (stopwatch.isRunning) {
+      setState(() {
+        timeRemaining = formatDuration(stopwatch.elapsed);
+      });
+    }
+  }
+
+  String formatDuration(Duration duration) {
+    int remaining = timeLimit-duration.inSeconds.remainder(60);
+    if(remaining<=0) {
+      goToMenu();
+      stopwatch.reset();
+    }
+    return remaining.toString();
+  }
 
   @override
   void initState() {
     super.initState();
+    timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
+    stopwatch.start();
 
     emojiTimer = Timer.periodic(const Duration(milliseconds: 500), (Timer timer) {
       setState(() {
@@ -49,7 +80,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
                 angle: 1.0,
                 angularVelocity: .3 + r.nextDouble() * 3.0,
                 position: Offset(2.0 + r.nextDouble() * (widget.worldSize.width - 4.0), 1.0),
-                velocity: Offset(-1.0 + r.nextDouble() * 2.0, 7.0 + r.nextDouble() * 7.0)),
+                velocity: Offset(-1.0 + r.nextDouble() * 2.0, 10.0 + r.nextDouble() * 7.0)),
             type: EmojiType.values[r.nextInt(EmojiType.values.length)]));
       });
     });
@@ -57,12 +88,18 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   @override
   void dispose() {
-    emojiTimer.cancel();
+    if (emojiTimer != null) {
+      emojiTimer.cancel();
+    }
+    timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if(m.getInt(m.me)! >= 1000 || m.getInt(m.other)! >= 1000) {
+      goToMenu();
+    }
     double ppu = widget.screenSize.height / widget.worldSize.height;
     List<Widget> stackItems = [];
     for (Emoji e in emoji) {
@@ -161,9 +198,9 @@ class EmojiWidgetState extends State<EmojiWidget> {
             }
             for(Emoji e in toRemove) {
               if(e.type == EmojiType.love) {
-                m.setInt(m.me, m.getInt(m.me)!-40);
+                m.setInt(m.me, m.getInt(m.me)!-20);
               } else {
-                m.setInt(m.me, m.getInt(m.me)!+40);
+                m.setInt(m.me, m.getInt(m.me)!+20);
               }
             }
             emoji.removeWhere((e) => toRemove.contains(e));

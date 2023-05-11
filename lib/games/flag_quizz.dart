@@ -81,9 +81,8 @@ class _HomeState extends State<Flag> {
   void goToMenu() {
     setState(() {
       questionIndex = 0;
-      //totalScore = 0;
+      m.setInt(m.me, 0);
       endOfQuiz = false;
-      timeLimit = 20;
     });
   }
 
