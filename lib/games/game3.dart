@@ -12,12 +12,10 @@ import '../services/connection_manager.dart';
 
 class Game3 extends FlameGame with TapCallbacks {
   Manager m = Manager();
-  late Image wantedImage;
   List<Image> faces = [];
   TimerComponent? timer;
   TimerComponent? timerStart;
 
-  SpriteComponent? wantedSprite;
   TextComponent? timerText;
   TextComponent? timerCount;
 
@@ -27,6 +25,9 @@ class Game3 extends FlameGame with TapCallbacks {
   List<Face> fakes = [];
   bool isPlaying = false;
 
+  @override
+  Color backgroundColor() => const Color.fromARGB(0, 248, 249, 249);
+
   Future startSequence() async {
     cleanUpLevel();
     var instructionLevel = TextComponent(
@@ -34,6 +35,7 @@ class Game3 extends FlameGame with TapCallbacks {
       position: Vector2(size.x / 2, size.y / 2 - 70),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 60.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -42,10 +44,11 @@ class Game3 extends FlameGame with TapCallbacks {
       size: Vector2.all(13),
     );
     var instructionTitle = TextComponent(
-      text: 'Toucher sur le suspect!',
+      text: 'Trouver l\'intrus!',
       position: Vector2(size.x / 2, size.y / 2 - 25),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 32.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -59,6 +62,7 @@ class Game3 extends FlameGame with TapCallbacks {
       position: Vector2(size.x / 2, size.y / 2 + 40),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 60.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -88,21 +92,14 @@ class Game3 extends FlameGame with TapCallbacks {
   }
 
   Future startLevel() async {
-    wantedSprite = SpriteComponent.fromImage(
-      wantedImage,
-      size: Vector2(size.y * .2, size.y * .2),
-      anchor: Anchor.center,
-    );
-    wantedSprite!.position = Vector2(size.x / 2, wantedSprite!.height / 2);
-    add(wantedSprite!);
-
     var countdown = 25;
     // start timer text
     timerText = TextComponent(
       text: 'Temps restant',
-      position: Vector2(size.x / 2, wantedSprite!.height + 30),
+      position: Vector2(size.x / 2, size.y * .3),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 32.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -112,9 +109,10 @@ class Game3 extends FlameGame with TapCallbacks {
     );
     timerCount = TextComponent(
       text: "${countdown}s",
-      position: Vector2(size.x / 2, wantedSprite!.height + 70),
+      position: Vector2(size.x / 2, size.y * .3 + 35),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 32.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -159,7 +157,7 @@ class Game3 extends FlameGame with TapCallbacks {
     for (var i = 0; i < count; i++) {
       // random position between 0 and 1
       var randomPosition = Vector2(
-          Random().nextDouble() * size.x * .9,
+          Random().nextDouble() * size.x * .9 + size.x * .05,
           Random().nextDouble() * size.x * .7 +
               size.y -
               size.x * .7 -
@@ -181,20 +179,20 @@ class Game3 extends FlameGame with TapCallbacks {
           image,
           randomPosition,
           speed.toDouble(),
-          size.x * .1,
-          Vector2(0 * size.x * .9,
+          size.x * .07,
+          Vector2(0 * size.x * .9 + size.x * .05,
               0 * size.x * .7 + size.y - size.x * .7 - size.x * .2),
-          Vector2(1 * size.x * .9,
+          Vector2(1 * size.x * .9 + size.x * .05,
               1 * size.x * .7 + size.y - size.x * .7 - size.x * .2));
       if (i == count ~/ 2) {
         suspect = Face(
             suspectImage,
             randomPosition,
             speed.toDouble(),
-            size.x * .1,
-            Vector2(0 * size.x * .9,
+            size.x * .07,
+            Vector2(0 * size.x * .9 + size.x * .05,
                 0 * size.x * .7 + size.y - size.x * .7 - size.x * .2),
-            Vector2(1 * size.x * .9,
+            Vector2(1 * size.x * .9 + size.x * .05,
                 1 * size.x * .7 + size.y - size.x * .7 - size.x * .2));
 
         add(suspect!);
@@ -205,8 +203,8 @@ class Game3 extends FlameGame with TapCallbacks {
     }
 
     suspectSprite = SpriteComponent.fromImage(suspectImage);
-    suspectSprite!.position = wantedSprite!.position;
-    suspectSprite!.size = wantedSprite!.size;
+    suspectSprite!.position = Vector2(size.x / 2, size.y * .2);
+    suspectSprite!.size = Vector2.all(size.x * .2);
     suspectSprite!.anchor = Anchor.center;
     add(suspectSprite!);
   }
@@ -292,10 +290,6 @@ class Game3 extends FlameGame with TapCallbacks {
       remove(timerCount!);
     }
     timerCount = null;
-    if (wantedSprite != null) {
-      remove(wantedSprite!);
-    }
-    wantedSprite = null;
   }
 
   void endTheGame() {
@@ -307,12 +301,11 @@ class Game3 extends FlameGame with TapCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    wantedImage = await images.load('wanted.jpg');
-    faces.add(await images.load('face1.png'));
-    faces.add(await images.load('face2.png'));
-    faces.add(await images.load('face3.png'));
-    faces.add(await images.load('face4.png'));
-    faces.add(await images.load('face5.png'));
+    faces.add(await images.load('Disguised Face.png'));
+    faces.add(await images.load('Angry Face with Horns.png'));
+    faces.add(await images.load('Face with Head-Bandage.png'));
+    faces.add(await images.load('Ghost.png'));
+    faces.add(await images.load('Cold Face.png'));
     await startSequence();
   }
 }
@@ -326,6 +319,7 @@ class Face extends SpriteComponent {
   Face(Image image, Vector2 position, this.speed, double size,
       this.boundTopLeft, this.boundBottomRight)
       : super.fromImage(image, size: Vector2(size, size), position: position) {
+    anchor = Anchor.center;
     // random direction between -1 and 1
     direction = Vector2(Random().nextDouble() - .5, Random().nextDouble() - .5)
         .normalized();
