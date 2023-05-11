@@ -74,7 +74,7 @@ class _HostPageState extends State<HostPage> {
                         padding: EdgeInsets.all(12),
                         child: Card(
                           child: ListTile(
-                            title: Text("Personne n'est connecté"),
+                            title: Text("En attente d'un adversaire"),
                           ),
                         ))
                   else if (m.groupInfo == null)

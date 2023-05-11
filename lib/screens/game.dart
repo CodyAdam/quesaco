@@ -45,10 +45,6 @@ class _GamePageState extends State<GamePage> {
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 3) {
             return Scaffold(
-                appBar: AppBar(
-                  title: Text("Minigame $id"),
-                  automaticallyImplyLeading: false,
-                ),
                 body: GameWidget(game: Game3()),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 4) {

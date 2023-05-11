@@ -94,7 +94,7 @@ class Manager extends GameState {
     if (!isSolo) {
       await refreshRoom();
     }
-    if (isSolo || (groupInfo == null || groupInfo!.clients.length == 1)) {
+    if (groupInfo == null || groupInfo!.clients.isEmpty) {
       isSolo = true;
     }
     sendMessage("start");
