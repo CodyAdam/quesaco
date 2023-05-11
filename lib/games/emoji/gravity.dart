@@ -1,7 +1,8 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
-import 'dart:ui';
 
 const Offset GRAVITY = Offset(0, -9.8);
 const double WORLD_HEIGHT = 16.0;
@@ -153,9 +154,7 @@ class FlightPathWidgetState extends State<FlightPathWidget>
 
   @override
   void dispose() {
-    if (animationController != null) {
-      animationController.dispose();
-    }
+    animationController.dispose();
     super.dispose();
   }
 

@@ -29,9 +29,7 @@ class SliceWidgetState extends State<SliceWidget> with SingleTickerProviderState
 
   @override
   void dispose() {
-    if (controller != null) {
-      controller.dispose();
-    }
+    controller.dispose();
     super.dispose();
   }
 
@@ -59,7 +57,7 @@ class SlicePainter extends CustomPainter {
           ..moveTo(begin.dx, begin.dy)
           ..lineTo(end.dx, end.dy),
         Paint()
-          ..color = Colors.white.withAlpha(180)
+          ..color = const Color.fromARGB(255, 40, 38, 38).withAlpha(180)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1);
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters
+
 import 'dart:async';
 import 'dart:math';
 
@@ -33,7 +35,7 @@ class _HomeState extends State<Flag> {
       answers.add(answerCountry);
       answerWasSelected = true;
       if (answerScore) {
-        m.setInt(m.me, m.getInt(m.me)!+40);
+        m.setInt(m.me, m.getInt(m.me)! + 40);
       } else {
         showPopupFor3Seconds();
       }
@@ -52,11 +54,11 @@ class _HomeState extends State<Flag> {
             content: Text(
               "Mauvaise réponse !\nPénalité de 3 secondes !",
               textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: Color.fromARGB(255, 244, 125, 116),
           );
-        }
-    );
+        });
   }
 
   void showPopupFor3Seconds() {
@@ -107,14 +109,13 @@ class _HomeState extends State<Flag> {
   }
 
   String formatDuration(Duration duration) {
-    int remaining = timeLimit-duration.inSeconds.remainder(60);
-    if(remaining<=0) {
+    int remaining = timeLimit - duration.inSeconds.remainder(60);
+    if (remaining <= 0) {
       goToMenu();
       stopwatch.reset();
     }
     return remaining.toString();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +124,9 @@ class _HomeState extends State<Flag> {
     return Scaffold(
       body: Center(
         child: Column(children: [
-          Padding(padding: const EdgeInsets.only(top: 10.0),
-              child :Text(
+          Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
                 timeRemaining,
                 textAlign: TextAlign.center,
               )),
@@ -139,7 +141,8 @@ class _HomeState extends State<Flag> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.0),
                 image: DecorationImage(
-                  image: AssetImage('assets/flags/${goodList[questionIndex]}.png'),
+                  image:
+                      AssetImage('assets/flags/${goodList[questionIndex]}.png'),
                   fit: BoxFit.scaleDown,
                 )),
           ),
@@ -157,9 +160,9 @@ class _HomeState extends State<Flag> {
               },
               answerColor: answerWasSelected
                   ? answer.goodOne
-                      ? Colors.green
-                      : answer.country.compareTo(answers[questionIndex])==0
-                          ? Colors.red
+                      ? const Color.fromARGB(255, 122, 242, 126)
+                      : answer.country.compareTo(answers[questionIndex]) == 0
+                          ? const Color.fromARGB(255, 244, 125, 116)
                           : null
                   : null,
             ),
@@ -233,7 +236,6 @@ List<String> getGoodOnes(List<List<Pair<String, bool>>> list) {
   }
   return goodList;
 }
-
 
 var map = {
   'ad': 'Andorre',

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 import 'dart:math';
 
@@ -39,7 +41,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
   void initState() {
     super.initState();
 
-    emojiTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    emojiTimer = Timer.periodic(const Duration(milliseconds: 500), (Timer timer) {
       setState(() {
         emoji.add(Emoji(
             createdMS: DateTime.now().millisecondsSinceEpoch,
@@ -55,9 +57,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   @override
   void dispose() {
-    if (emojiTimer != null) {
-      emojiTimer.cancel();
-    }
+    emojiTimer.cancel();
     super.dispose();
   }
 

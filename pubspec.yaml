@@ -41,6 +41,7 @@ dependencies:
   provider: ^6.0.5
   json_annotation: ^4.8.1
   flame: ^1.7.3
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +71,7 @@ flutter:
     - assets/images/
     - assets/
     - assets/musics/
+    - assets/icon/
     - assets/emoji/
     - assets/flags/
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -120,3 +122,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  background_color: "#ffffff"
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
