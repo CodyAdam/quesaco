@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 import 'dart:ui';
 
-
 const Offset GRAVITY = Offset(0, -9.8);
 const double WORLD_HEIGHT = 16.0;
 
@@ -36,8 +35,9 @@ extension EmojiTypeUtil on EmojiType {
     }
   }
 
-  Widget getImageWidget(double pixelsPerUnit) =>
-      Image.asset(imageFile, width: unitSize.width * pixelsPerUnit, height: unitSize.height * pixelsPerUnit);
+  Widget getImageWidget(double pixelsPerUnit) => Image.asset(imageFile,
+      width: unitSize.width * pixelsPerUnit,
+      height: unitSize.height * pixelsPerUnit);
 }
 
 class Emoji {
@@ -46,7 +46,8 @@ class Emoji {
   final FlightPath flightPath;
   final EmojiType type;
 
-  Emoji({required this.createdMS, required this.flightPath, required this.type});
+  Emoji(
+      {required this.createdMS, required this.flightPath, required this.type});
 }
 
 class EmojiSliced {
@@ -55,7 +56,8 @@ class EmojiSliced {
   final FlightPath flightPath;
   final EmojiType type;
 
-  EmojiSliced({required this.slice, required this.flightPath, required this.type});
+  EmojiSliced(
+      {required this.slice, required this.flightPath, required this.type});
 }
 
 class Slice {
@@ -75,7 +77,11 @@ class FlightPath {
   final Offset position;
   final Offset velocity;
 
-  FlightPath({required this.angle, required this.angularVelocity, required this.position, required this.velocity});
+  FlightPath(
+      {required this.angle,
+      required this.angularVelocity,
+      required this.position,
+      required this.velocity});
 
   Offset getPosition(double t) {
     return (GRAVITY * .5) * t * t + velocity * t + position;
@@ -88,10 +94,15 @@ class FlightPath {
   List<double> get zeroes {
     double a = (GRAVITY * .5).dy;
     double sqrtTerm = sqrt(velocity.dy * velocity.dy - 4.0 * a * position.dy);
-    return [(-velocity.dy + sqrtTerm) / (2 * a), (-velocity.dy - sqrtTerm) / (2 * a)];
+    if (sqrtTerm.isNaN) {
+      return [0, 0]; // or handle the case when there are no real zeroes
+    }
+    return [
+      (-velocity.dy + sqrtTerm) / (2 * a),
+      (-velocity.dy - sqrtTerm) / (2 * a)
+    ];
   }
 }
-
 
 class FlightPathWidget extends StatefulWidget {
   final FlightPath flightPath;
@@ -103,14 +114,21 @@ class FlightPathWidget extends StatefulWidget {
 
   final Function() onOffScreen;
 
-  const FlightPathWidget({required Key key, required this.flightPath, required this.unitSize, required this.pixelsPerUnit, required this.child, required this.onOffScreen})
+  const FlightPathWidget(
+      {required Key key,
+      required this.flightPath,
+      required this.unitSize,
+      required this.pixelsPerUnit,
+      required this.child,
+      required this.onOffScreen})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() => FlightPathWidgetState();
 }
 
-class FlightPathWidgetState extends State<FlightPathWidget> with SingleTickerProviderStateMixin {
+class FlightPathWidgetState extends State<FlightPathWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController animationController;
 
   @override
@@ -145,12 +163,14 @@ class FlightPathWidgetState extends State<FlightPathWidget> with SingleTickerPro
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: animationController,
       builder: (context, child) {
-        Offset pos = widget.flightPath.getPosition(animationController.value) * widget.pixelsPerUnit;
+        Offset pos = widget.flightPath.getPosition(animationController.value) *
+            widget.pixelsPerUnit;
         return Positioned(
           left: pos.dx - widget.unitSize.width * .5 * widget.pixelsPerUnit,
           bottom: pos.dy - widget.unitSize.height * .5 * widget.pixelsPerUnit,
           child: Transform(
-            transform: Matrix4.rotationZ(widget.flightPath.getAngle(animationController.value)),
+            transform: Matrix4.rotationZ(
+                widget.flightPath.getAngle(animationController.value)),
             alignment: Alignment.center,
             child: child,
           ),
