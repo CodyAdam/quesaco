@@ -96,7 +96,7 @@ class Game3 extends FlameGame with TapCallbacks {
     // start timer text
     timerText = TextComponent(
       text: 'Temps restant',
-      position: Vector2(size.x / 2, size.x * .4),
+      position: Vector2(size.x / 2, size.y * .3),
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color.fromARGB(255, 52, 52, 55),
@@ -109,7 +109,7 @@ class Game3 extends FlameGame with TapCallbacks {
     );
     timerCount = TextComponent(
       text: "${countdown}s",
-      position: Vector2(size.x / 2, size.x * .4 + 35),
+      position: Vector2(size.x / 2, size.y * .3 + 35),
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Color.fromARGB(255, 52, 52, 55),
@@ -157,7 +157,7 @@ class Game3 extends FlameGame with TapCallbacks {
     for (var i = 0; i < count; i++) {
       // random position between 0 and 1
       var randomPosition = Vector2(
-          Random().nextDouble() * size.x * .9,
+          Random().nextDouble() * size.x * .9 + size.x * .05,
           Random().nextDouble() * size.x * .7 +
               size.y -
               size.x * .7 -
@@ -180,9 +180,9 @@ class Game3 extends FlameGame with TapCallbacks {
           randomPosition,
           speed.toDouble(),
           size.x * .07,
-          Vector2(0 * size.x * .9,
+          Vector2(0 * size.x * .9 + size.x * .05,
               0 * size.x * .7 + size.y - size.x * .7 - size.x * .2),
-          Vector2(1 * size.x * .9,
+          Vector2(1 * size.x * .9 + size.x * .05,
               1 * size.x * .7 + size.y - size.x * .7 - size.x * .2));
       if (i == count ~/ 2) {
         suspect = Face(
@@ -190,9 +190,9 @@ class Game3 extends FlameGame with TapCallbacks {
             randomPosition,
             speed.toDouble(),
             size.x * .07,
-            Vector2(0 * size.x * .9,
+            Vector2(0 * size.x * .9 + size.x * .05,
                 0 * size.x * .7 + size.y - size.x * .7 - size.x * .2),
-            Vector2(1 * size.x * .9,
+            Vector2(1 * size.x * .9 + size.x * .05,
                 1 * size.x * .7 + size.y - size.x * .7 - size.x * .2));
 
         add(suspect!);
@@ -203,7 +203,7 @@ class Game3 extends FlameGame with TapCallbacks {
     }
 
     suspectSprite = SpriteComponent.fromImage(suspectImage);
-    suspectSprite!.position = Vector2(size.x / 2, size.x * .2);
+    suspectSprite!.position = Vector2(size.x / 2, size.y * .2);
     suspectSprite!.size = Vector2.all(size.x * .2);
     suspectSprite!.anchor = Anchor.center;
     add(suspectSprite!);
@@ -319,6 +319,7 @@ class Face extends SpriteComponent {
   Face(Image image, Vector2 position, this.speed, double size,
       this.boundTopLeft, this.boundBottomRight)
       : super.fromImage(image, size: Vector2(size, size), position: position) {
+    anchor = Anchor.center;
     // random direction between -1 and 1
     direction = Vector2(Random().nextDouble() - .5, Random().nextDouble() - .5)
         .normalized();
