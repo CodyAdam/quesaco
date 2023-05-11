@@ -55,6 +55,9 @@ class P2PManager {
 
       if (wifi.isDenied) await Permission.nearbyWifiDevices.request();
       if (location.isDenied) await Permission.location.request();
+      if (!await plugin.checkLocationEnabled()) {
+        await plugin.enableLocationServices();
+      }
     }
     return result;
   }
@@ -75,6 +78,9 @@ class P2PManager {
 
     if (wifi.isDenied) await Permission.nearbyWifiDevices.request();
     if (location.isDenied) await Permission.location.request();
+    if (!await plugin.checkLocationEnabled()) {
+      await plugin.enableLocationServices();
+    }
     return await plugin.discover();
   }
 

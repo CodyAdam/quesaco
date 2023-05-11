@@ -216,7 +216,8 @@ class Game3 extends FlameGame with TapCallbacks {
       timer!.timer.stop();
       var winnerText = m.getString("find_${level}_winner");
       if (winnerText != null) {
-        timerText!.text = "Bien joué à $winnerText";
+        timerText!.text =
+            "Bien joué à ${winnerText == m.me ? "moi" : "l'autre"}";
       } else {
         timerText!.text = "Personne n'a trouvé";
       }

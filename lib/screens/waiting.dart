@@ -20,6 +20,9 @@ class _WaitingPageState extends State<WaitingPage> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 1), () {
+      Manager().refreshRoom();
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Salle d\'attente'),
