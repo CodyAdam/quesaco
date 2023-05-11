@@ -78,6 +78,9 @@ flutter:
     - assets/images/face3.png
     - assets/images/face4.png
     - assets/images/face5.png
+    - assets/images/lava.jpg
+    - assets/images/rock.png
+    - assets/images/fireball.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
