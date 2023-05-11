@@ -60,7 +60,7 @@ class _HomeState extends State<Music> {
   void goToMenu() {
     setState(() {
       questionIndex = 0;
-      //totalScore = 0;
+      m.setInt(m.me, 0);
       endOfQuiz = false;
     });
   }
