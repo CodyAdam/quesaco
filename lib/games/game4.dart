@@ -94,7 +94,7 @@ class Game4 extends FlameGame with TapCallbacks {
     // start timer text
     timerText = TextComponent(
       text: 'Temps de survie',
-      position: Vector2(size.x / 2, size.x * .1),
+      position: Vector2(size.x / 2, size.x * .2),
       textRenderer: TextPaint(
         style: const TextStyle(
           fontSize: 32.0,
@@ -106,7 +106,7 @@ class Game4 extends FlameGame with TapCallbacks {
     );
     timerCount = TextComponent(
       text: "${countup}s",
-      position: Vector2(size.x / 2, size.x * .1 + 30),
+      position: Vector2(size.x / 2, size.x * .2 + 30),
       textRenderer: TextPaint(
         style: const TextStyle(
           fontSize: 32.0,
