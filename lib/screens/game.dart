@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quesaco/games/game3.dart';
 
+import '../games/game4.dart';
 import '../models/game_state.dart';
 import '../services/connection_manager.dart';
 import '../widget/card.dart';
@@ -49,11 +50,7 @@ class _GamePageState extends State<GamePage> {
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 4) {
             return Scaffold(
-                appBar: AppBar(
-                  title: Text("Minigame $id"),
-                  automaticallyImplyLeading: false,
-                ),
-                body: const Text("Game 4"),
+                body: GameWidget(game: Game4()),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 5) {
             return Scaffold(
