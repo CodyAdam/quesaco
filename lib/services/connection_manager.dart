@@ -88,21 +88,20 @@ class Manager extends GameState {
   }
 
   Future<bool> startGame() async {
-    refreshRoom();
-    if (!isConnected || groupInfo == null) return false;
-    if (isHost) {
+    me = HOST_USERNAME;
+    other = PLAYER_USERNAME;
+    isHost = true;
+    if (!isSolo) {
       await refreshRoom();
-      if (groupInfo!.clients.length == 1) {
-        isSolo = true;
-      }
-      sendMessage("start");
-      isGameStarted = true;
-      init();
-      notifyListeners();
-      return true;
     }
+    if (isSolo || (groupInfo == null || groupInfo!.clients.length == 1)) {
+      isSolo = true;
+    }
+    sendMessage("start");
+    isGameStarted = true;
+    init();
     notifyListeners();
-    return false;
+    return true;
   }
 
   Future<bool> _startSocket() async {
@@ -154,6 +153,7 @@ class Manager extends GameState {
   }
 
   Future refreshRoom() async {
+    if (!p2p.isInit) p2p.init();
     if (isHost || isConnected) {
       if (!isConnected) {
         await _startSocket();
@@ -167,11 +167,13 @@ class Manager extends GameState {
   }
 
   Future disconnect() async {
+    if (!p2p.isInit) p2p.init();
     log("Disconnecting...");
     await p2p.disconnect();
     await p2p.stopDiscover();
     isConnected = false;
     isGameStarted = false;
+    isSolo = false;
     groupInfo = null;
     peers = [];
     clear();
@@ -223,6 +225,10 @@ class Manager extends GameState {
     if (message == "start") {
       init();
       isGameStarted = true;
+      isSolo = false;
+      isHost = false;
+      me = PLAYER_USERNAME;
+      other = HOST_USERNAME;
       notifyListeners();
       return;
     }

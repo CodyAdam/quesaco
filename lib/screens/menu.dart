@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:quesaco/screens/game.dart';
 
 import '../services/connection_manager.dart';
 import 'host.dart';
@@ -7,6 +10,8 @@ import 'join.dart';
 class Menu extends StatefulWidget {
   const Menu({super.key});
 
+  
+
   @override
   State<StatefulWidget> createState() {
     return _MenuState();
@@ -14,18 +19,6 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Manager().disconnect();
-    });
-  }
-
-  Future _onNavigateBack() async {
-    await Manager().disconnect();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,21 +48,50 @@ class _MenuState extends State<Menu> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ElevatedButton(
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.lime)),
+                        elevation: MaterialStateProperty.all(5),
+                        backgroundColor: MaterialStateProperty.all(
+                            const Color.fromARGB(255, 61, 159, 239))),
                     onPressed: () async {
                       // Navigate
-                      Navigator.push(
+                      Manager().isSolo = true;
+                      Manager().startGame();
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HostPage()),
+                            builder: (context) => const GamePage()),
                       );
-                      await _onNavigateBack();
                     },
                     child: const Padding(
                         padding: EdgeInsets.all(20),
                         child: Text(
-                          'Créer une room / Solo',
+                          'Jouer en Solo',
+                          style: TextStyle(fontSize: 28),
+                        )),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(5),
+                        backgroundColor: MaterialStateProperty.all(
+                            const Color.fromARGB(255, 160, 220, 57))),
+                    onPressed: () async {
+                      // Navigate
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HostPage()),
+                      );
+                    },
+                    child: const Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          'Créer une room',
                           style: TextStyle(fontSize: 28),
                         )),
                   ),
@@ -82,16 +104,16 @@ class _MenuState extends State<Menu> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ElevatedButton(
                       style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(5),
                           backgroundColor:
                               MaterialStateProperty.all(Colors.green)),
                       onPressed: () async {
                         // Navigate
-                        Navigator.push(
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const JoinPage()),
                         );
-                        await _onNavigateBack();
                       },
                       child: const Padding(
                           padding: EdgeInsets.all(20),

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' hide log;
-import 'dart:developer';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -219,7 +218,7 @@ class Game3 extends FlameGame with TapCallbacks {
       if (winnerText != null) {
         timerText!.text = "Bien joué à $winnerText";
       } else {
-        timerText!.text = "Personne n'a trouvé le suspect";
+        timerText!.text = "Personne n'a trouvé";
       }
     }
     for (var face in fakes) {

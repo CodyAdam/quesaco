@@ -54,11 +54,7 @@ class P2PManager {
       var location = await Permission.location.status;
 
       if (wifi.isDenied) await Permission.nearbyWifiDevices.request();
-      if (location.isLimited) await Permission.location.request();
-
-      if (!await plugin.checkLocationEnabled()) {
-        plugin.enableLocationServices();
-      }
+      if (location.isDenied) await Permission.location.request();
     }
     return result;
   }
@@ -74,6 +70,11 @@ class P2PManager {
   }
 
   Future<bool> discover() async {
+    var wifi = await Permission.nearbyWifiDevices.status;
+    var location = await Permission.location.status;
+
+    if (wifi.isDenied) await Permission.nearbyWifiDevices.request();
+    if (location.isDenied) await Permission.location.request();
     return await plugin.discover();
   }
 
