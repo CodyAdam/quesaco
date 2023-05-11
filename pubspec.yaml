@@ -34,6 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  audioplayers: ^4.0.1
   flutter_p2p_connection: ^2.0.1
   flutter_riverpod: ^2.3.2
   permission_handler: ^10.2.0
@@ -66,22 +67,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/thumb_game_1.png
-    - assets/images/thumb_game_2.png
-    - assets/images/thumb_game_3.png
-    - assets/images/thumb_game_4.png
-    - assets/images/thumb_game_5.png
-    - assets/images/thumb_game_6.png
-    - assets/images/wanted.jpg
-    - assets/images/face1.png
-    - assets/images/face2.png
-    - assets/images/face3.png
-    - assets/images/face4.png
-    - assets/images/face5.png
-    - assets/images/lava.jpg
-    - assets/images/rock.png
-    - assets/images/fireball.png
-
+    - assets/images/
+    - assets/
+    - assets/musics/
+    - assets/emoji/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

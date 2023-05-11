@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:quesaco/models/game_state.dart';
 
@@ -8,6 +9,8 @@ import 'p2p.dart';
 class Manager extends GameState {
   static final Manager _instance = Manager._internal();
   final p2p = P2PManager();
+  AudioPlayer audioPlayer = AudioPlayer();
+  AudioCache audioCache = AudioCache();
   WifiP2PGroupInfo? groupInfo;
   bool isHost = false;
   List<DiscoveredPeers> peers = [];
