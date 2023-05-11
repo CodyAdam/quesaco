@@ -25,7 +25,6 @@ class _HomeState extends State<Music> {
   var list = random();
   bool endOfQuiz = false;
   bool answerWasSelected = false;
-  int totalScore = 0;
   int questionIndex = 0;
   bool taped = false;
   List<String> answers = List<String>.filled(map.length, "");
@@ -35,7 +34,11 @@ class _HomeState extends State<Music> {
       answers[questionIndex] = answerMusic;
       answerWasSelected = true;
       if (answerScore) {
-        totalScore++;
+        double scaledScore = 50 + (50*(timeLimit-stopwatch.elapsed.inSeconds.remainder(60)))/15;
+        print(50*timeLimit-stopwatch.elapsed.inSeconds.remainder(60));
+        print(scaledScore);
+        print(stopwatch.elapsed.inSeconds.remainder(60));
+        m.setInt(m.me, m.getInt(m.me)!+scaledScore.toInt());
       }
       if (questionIndex + 1 == list.length) {
         endOfQuiz = true;
@@ -57,9 +60,8 @@ class _HomeState extends State<Music> {
   void goToMenu() {
     setState(() {
       questionIndex = 0;
-      totalScore = 0;
+      //totalScore = 0;
       endOfQuiz = false;
-      timeLimit = 15;
     });
   }
 
@@ -125,10 +127,11 @@ class _HomeState extends State<Music> {
     return Scaffold(
       body: Center(
         child: Column(children: [
-          Text(
+          Padding(padding: const EdgeInsets.only(top: 10.0),
+          child :Text(
             timeRemaining,
             textAlign: TextAlign.center,
-          ),
+          )),
           Container(
             width: 500.0,
             height: 250.0,
@@ -167,10 +170,6 @@ class _HomeState extends State<Music> {
           ),
           const SizedBox(
             height: 20.0,
-          ),
-          Text(
-            totalScore.toString(),
-            textAlign: TextAlign.center,
           ),
         ]),
       ),

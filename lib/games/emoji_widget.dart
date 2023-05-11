@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:quesaco/games/emoji/slice.dart';
 import 'package:quesaco/games/emoji/slice_math.dart';
 
+import '../services/connection_manager.dart';
 import 'emoji/gravity.dart';
 
 class EmojiWidget extends StatefulWidget {
@@ -32,7 +33,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
   late Offset sliceBeginPosition;
   late Offset sliceEnd;
 
-  int score = 0;
+  Manager m = Manager();
 
   @override
   void initState() {
@@ -106,27 +107,6 @@ class EmojiWidgetState extends State<EmojiWidget> {
         },
       ));
     }
-    TextStyle scoreDisplay = const TextStyle(fontSize: 32, color: Colors.black, fontWeight: FontWeight.w700);
-    stackItems.add(Positioned.fill(
-        child: DefaultTextStyle(
-            style: scoreDisplay,
-            child: SafeArea(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(children: [
-                          const Text("Score"),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text("$score")
-                        ]),
-                      ],
-                    )
-                  ],
-                )))));
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       child: Stack(
@@ -181,9 +161,9 @@ class EmojiWidgetState extends State<EmojiWidget> {
             }
             for(Emoji e in toRemove) {
               if(e.type == EmojiType.love) {
-                score -= 1;
+                m.setInt(m.me, m.getInt(m.me)!-40);
               } else {
-                score += 1;
+                m.setInt(m.me, m.getInt(m.me)!+40);
               }
             }
             emoji.removeWhere((e) => toRemove.contains(e));

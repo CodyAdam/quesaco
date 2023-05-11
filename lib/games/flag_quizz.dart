@@ -33,7 +33,7 @@ class _HomeState extends State<Flag> {
       answers.add(answerCountry);
       answerWasSelected = true;
       if (answerScore) {
-        m.setInt(m.me, m.getInt(m.me)!+1);
+        m.setInt(m.me, m.getInt(m.me)!+40);
       } else {
         showPopupFor3Seconds();
       }
@@ -123,13 +123,14 @@ class _HomeState extends State<Flag> {
     return Scaffold(
       body: Center(
         child: Column(children: [
-          Text(
-            timeRemaining,
-            textAlign: TextAlign.center,
-          ),
+          Padding(padding: const EdgeInsets.only(top: 10.0),
+              child :Text(
+                timeRemaining,
+                textAlign: TextAlign.center,
+              )),
           Container(
             width: 500.0,
-            height: 220.0,
+            height: 200.0,
             margin: const EdgeInsets.only(
                 bottom: 10.0, top: 20.0, left: 30.0, right: 30.0),
             padding:
