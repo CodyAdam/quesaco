@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:quesaco/answer.dart';
+import 'package:quesaco/widget/answer.dart';
 
 class Flag extends StatefulWidget {
   const Flag({super.key});

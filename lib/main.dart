@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:quesaco/flag_quizz.dart';
-import 'package:quesaco/music_quizz.dart';
-import 'package:quesaco/emoji_widget.dart';
+import 'package:quesaco/games/flag_quizz.dart';
+import 'package:quesaco/games/music_quizz.dart';
+import 'package:quesaco/games/emoji_widget.dart';
 
-import 'gravity.dart';
+import 'games/emoji/gravity.dart';
 
 
 void main() {
@@ -30,17 +30,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-        home: Scaffold(
-            body: Container(
-                color: Colors.white,
-                child: LayoutBuilder(builder: (context, constraints) {
-                  Size screenSize = Size(constraints.maxWidth, constraints.maxHeight);
-                  Size worldSize = Size(WORLD_HEIGHT * screenSize.aspectRatio, WORLD_HEIGHT);
-                  return EmojiWidget(
-                    screenSize: Size(constraints.maxWidth, constraints.maxHeight),
-                    worldSize: worldSize, key: const Key(""),
-                  );
-                })))
+        home: EmojiGame()
     );
   }
 }

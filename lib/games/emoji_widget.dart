@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:quesaco/slice.dart';
-import 'package:quesaco/slice_math.dart';
+import 'package:quesaco/games/emoji/slice.dart';
+import 'package:quesaco/games/emoji/slice_math.dart';
 
-import 'gravity.dart';
+import 'emoji/gravity.dart';
 
 class EmojiWidget extends StatefulWidget {
   final Size screenSize;
@@ -212,4 +212,19 @@ class EmojiSlicePath extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return false;
   }
+}
+
+Widget EmojiGame() {
+  return Scaffold(
+      body: Container(
+          color: Colors.white,
+          child: LayoutBuilder(builder: (context, constraints) {
+            Size screenSize = Size(constraints.maxWidth, constraints.maxHeight);
+            Size worldSize = Size(
+                WORLD_HEIGHT * screenSize.aspectRatio, WORLD_HEIGHT);
+            return EmojiWidget(
+              screenSize: Size(constraints.maxWidth, constraints.maxHeight),
+              worldSize: worldSize, key: const Key(""),
+            );
+          })));
 }
