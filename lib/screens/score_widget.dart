@@ -19,11 +19,20 @@ class ScoreWidget extends StatelessWidget {
         child : Column(
       children: [
         Padding(padding: EdgeInsets.only(top: 350)),
+        if (!m.isSolo) ...[
         Text(
           'Vous avez ${hasWon ? "gagné" : "perdu"} !',
           style: TextStyle(fontSize: 32, color: hasWon ? Colors.green : Colors.red),
         ),
         SizedBox(height: 10),
+        ],
+        if (m.isSolo) ...[
+          Text(
+            'Bien joué !',
+            style: TextStyle(fontSize: 32, color: hasWon ? Colors.green : Colors.red),
+          ),
+          SizedBox(height: 10),
+        ],
         Text(
           'Votre score : ${m.getInt(m.me)}',
           style: TextStyle(fontSize: 20),
