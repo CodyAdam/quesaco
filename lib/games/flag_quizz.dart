@@ -22,13 +22,15 @@ class _HomeState extends State<Flag> {
   String timeRemaining = "";
 
   Manager m = Manager();
+  int randomSeed = Random().nextInt(1000);
 
-  var list = random();
+  late List<List<Pair<String, bool>>> list;
   bool endOfQuiz = false;
   bool answerWasSelected = false;
   int questionIndex = 0;
   bool taped = false;
   List<String> answers = [];
+  bool gameStarted = false;
 
   void questionAnswered(bool answerScore, String answerCountry) {
     setState(() {
@@ -83,14 +85,25 @@ class _HomeState extends State<Flag> {
       questionIndex = 0;
       m.setInt(m.me, 0);
       endOfQuiz = false;
+      m.clearGamesData();
     });
   }
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
-    stopwatch.start();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (m.isHost) {
+        m.setInt("randomSeed", randomSeed);
+      }
+      while (m.getInt("randomSeed") == null) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      list = random(m.getInt("randomSeed")!);
+      gameStarted = true;
+      timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
+      stopwatch.start();
+    });
   }
 
   @override
@@ -118,6 +131,9 @@ class _HomeState extends State<Flag> {
 
   @override
   Widget build(BuildContext context) {
+    if(!gameStarted) {
+      return const Scaffold(body: Center(child: Text("En attente ...")));
+    } else {
     var goodList = getGoodOnes(list);
 
     return Scaffold(
@@ -183,6 +199,7 @@ class _HomeState extends State<Flag> {
       ),
     );
   }
+  }
 }
 
 class Pair<A, B> {
@@ -203,10 +220,10 @@ class Pair<A, B> {
   String toString() => '($_country, $_goodOne)';
 }
 
-List<List<Pair<String, bool>>> random() {
+List<List<Pair<String, bool>>> random(int seed) {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
-  var random = Random();
+  var random = Random(seed);
   int numberOfQuestions = 50;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];

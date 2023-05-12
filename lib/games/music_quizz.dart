@@ -23,20 +23,22 @@ class _HomeState extends State<Music> {
   String timeRemaining = "";
 
   Manager m = Manager();
+  int randomSeed = Random().nextInt(1000);
 
-  var list = random();
+  late List<List<Pair<String, bool>>> list;
   bool endOfQuiz = false;
   bool answerWasSelected = false;
   int questionIndex = 0;
   bool taped = false;
   List<String> answers = List<String>.filled(map.length, "");
+  bool gameStarted = false;
 
   void questionAnswered(bool answerScore, String answerMusic) {
     setState(() {
       answers[questionIndex] = answerMusic;
       answerWasSelected = true;
       if (answerScore) {
-        double scaledScore = 50 +
+        double scaledScore = 60 +
             (50 * (timeLimit - stopwatch.elapsed.inSeconds.remainder(60))) / 15;
         m.setInt(m.me, m.getInt(m.me)! + scaledScore.toInt());
       }
@@ -62,14 +64,25 @@ class _HomeState extends State<Music> {
       questionIndex = 0;
       m.setInt(m.me, 0);
       endOfQuiz = false;
+      m.clearGamesData();
     });
   }
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
-    stopwatch.start();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (m.isHost) {
+        m.setInt("randomSeed", randomSeed);
+      }
+      while (m.getInt("randomSeed") == null) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      list = random(m.getInt("randomSeed")!);
+      gameStarted = true;
+      timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
+      stopwatch.start();
+      });
   }
 
   @override
@@ -118,60 +131,65 @@ class _HomeState extends State<Music> {
 
   @override
   Widget build(BuildContext context) {
-    var goodList = getGoodOnes(list);
+    if (!gameStarted) {
+      return const Scaffold(body: Center(child: Text("En attente ...")));
+    } else {
+      var goodList = getGoodOnes(list);
 
-    loadAndPlayMusic('musics/${goodList[questionIndex]}.mp3');
+      loadAndPlayMusic('musics/${goodList[questionIndex]}.mp3');
 
-    return Scaffold(
-      body: Center(
-        child: Column(children: [
-          Container(
-            height: 200.0,
-            margin: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/audio.png'),
-                  fit: BoxFit.scaleDown,
-                )),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                timeRemaining,
-                style: const TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              )),
-          const SizedBox(
-            height: 40,
-          ),
-          ...list[questionIndex].map(
-            (answer) => Answer(
-              answerText: map[answer.game],
-              answerTap: () {
-                if (answerWasSelected) {
-                  return;
-                }
-                questionAnswered(answer.goodOne, answer.game);
-              },
-              answerColor: answerWasSelected
-                  ? answer.goodOne
-                      ? const Color.fromARGB(255, 122, 242, 126)
-                      : answer.game.compareTo(answers[questionIndex]) == 0
-                          ? const Color.fromARGB(255, 244, 125, 116)
-                          : null
-                  : null,
+      return Scaffold(
+        body: Center(
+          child: Column(children: [
+            Container(
+              height: 200.0,
+              margin: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/audio.png'),
+                    fit: BoxFit.scaleDown,
+                  )),
             ),
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-        ]),
-      ),
-    );
+            Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  timeRemaining,
+                  style: const TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                )),
+            const SizedBox(
+              height: 40,
+            ),
+            ...list[questionIndex].map(
+                  (answer) =>
+                  Answer(
+                    answerText: map[answer.game],
+                    answerTap: () {
+                      if (answerWasSelected) {
+                        return;
+                      }
+                      questionAnswered(answer.goodOne, answer.game);
+                    },
+                    answerColor: answerWasSelected
+                        ? answer.goodOne
+                        ? const Color.fromARGB(255, 122, 242, 126)
+                        : answer.game.compareTo(answers[questionIndex]) == 0
+                        ? const Color.fromARGB(255, 244, 125, 116)
+                        : null
+                        : null,
+                  ),
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+          ]),
+        ),
+      );
+    }
   }
 }
 
@@ -193,10 +211,10 @@ class Pair<A, B> {
   String toString() => '($_country, $_goodOne)';
 }
 
-List<List<Pair<String, bool>>> random() {
+List<List<Pair<String, bool>>> random(int seed) {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
-  var random = Random();
+  var random = Random(seed);
   int numberOfQuestions = 10;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];
