@@ -258,6 +258,18 @@ class Manager extends GameState {
     log("Error when receiving message (message.split(\":\").length != 2): $message");
   }
 
+  bool isChainingGames() {
+    var str = getString(UPCOMING_MINIGAMES_ID);
+    if (str == null) {
+      return false;
+    }
+    var ids = str.split(",");
+    if (ids.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
   void goToNextGame() {
     var str = getString(UPCOMING_MINIGAMES_ID);
     if (str == null) {

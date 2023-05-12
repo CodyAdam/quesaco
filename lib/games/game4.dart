@@ -10,11 +10,12 @@ import 'package:quesaco/models/game_state.dart';
 
 import '../services/connection_manager.dart';
 
-class Game4 extends FlameGame with TapCallbacks {
+class Game4 extends FlameGame with DragCallbacks {
   Manager m = Manager();
   late Image lavaImg;
   late Image rockImg;
   late Image fireBallImg;
+  late Image playerImg;
   TimerComponent? timer;
   TimerComponent? timerStart;
 
@@ -22,11 +23,13 @@ class Game4 extends FlameGame with TapCallbacks {
   SpriteComponent? rockSprite;
   TextComponent? timerText;
   TextComponent? timerCount;
+  bool isDragging = false;
   double t = 0;
-
+  Player? player;
+  Player? other;
   int countup = 0;
-
   bool isPlaying = false;
+  List<Fireball> fireballs = [];
 
   Future startSequence() async {
     cleanUpLevel();
@@ -134,8 +137,17 @@ class Game4 extends FlameGame with TapCallbacks {
 
     for (var i = 0; i < 10; i++) {
       if (isPlaying) {
-        add(Fireball(fireBallImg, size, 50));
+        var f = Fireball(fireBallImg, size, 50, fireballs);
+        fireballs.add(f);
+        add(f);
       }
+    }
+
+    player = Player(playerImg, size);
+    add(player!);
+    if (!m.isSolo) {
+      other = Player(playerImg, size);
+      add(other!);
     }
   }
 
@@ -162,6 +174,29 @@ class Game4 extends FlameGame with TapCallbacks {
           .1 * size.x * .01 * cos(t * 7) + .25 * size.x * cos(t * .3);
       lavaSprite!.position = (size / 2) + Vector2(offsetX, offsetY);
     }
+
+    for (var f in fireballs) {
+      if (f.position.distanceTo(player!.position) < 50) {
+        endTheGame();
+      }
+    }
+  }
+
+  @override
+  void onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    isDragging = true;
+  }
+
+  @override
+  void onDragUpdate(DragUpdateEvent event) {
+    if (player != null) player!.position += event.delta;
+  }
+
+  @override
+  void onDragEnd(DragEndEvent event) {
+    super.onDragEnd(event);
+    isDragging = false;
   }
 
   void cleanUpLevel() {
@@ -188,6 +223,7 @@ class Game4 extends FlameGame with TapCallbacks {
     lavaImg = await images.load('lava.jpg');
     rockImg = await images.load('rock.png');
     fireBallImg = await images.load('fireball.png');
+    playerImg = await images.load('Hot Face.png');
 
     await startSequence();
   }
@@ -229,7 +265,8 @@ class Fireball extends SpriteComponent {
   final double speed;
   final Vector2 psize;
   late Vector2 direction;
-  Fireball(Image img, this.psize, this.speed)
+  final List<SpriteComponent> fireballs;
+  Fireball(Image img, this.psize, this.speed, this.fireballs)
       : super.fromImage(img,
             size: Vector2.all(psize.x * .1),
             position: getRandomPointOutside(psize)) {
@@ -242,5 +279,51 @@ class Fireball extends SpriteComponent {
     super.update(dt);
     position += direction * speed * dt;
     angle += 4 * dt;
+
+    // remove if outside screen
+    if (position.x < 0 ||
+        position.x > psize.x ||
+        position.y < 0 ||
+        position.y > psize.y) {
+      fireballs.remove(this);
+      remove(this);
+    }
+  }
+}
+
+class Player extends SpriteComponent {
+  final Vector2 psize;
+  late Vector2 topLeftBound;
+  late Vector2 bottomRightBound;
+  double t = 0;
+  Player(Image img, this.psize)
+      : super.fromImage(img,
+            size: Vector2.all(psize.x * .1),
+            position: getRandomPointInside(psize)) {
+    anchor = Anchor.center;
+    topLeftBound = (psize / 2) - Vector2(psize.x * .75 / 2, psize.x * .75 / 2);
+    bottomRightBound = topLeftBound + Vector2.all(psize.x * .75);
+  }
+
+  @override
+  void update(double dt) {
+    t += dt;
+    super.update(dt);
+    if (position.x < topLeftBound.x) {
+      position.x = topLeftBound.x;
+    }
+    if (position.x > bottomRightBound.x) {
+      position.x = bottomRightBound.x;
+    }
+    if (position.y < topLeftBound.y) {
+      position.y = topLeftBound.y;
+    }
+    if (position.y > bottomRightBound.y) {
+      position.y = bottomRightBound.y;
+    }
+
+    var rotation = 0.07 * sin(t * 16) + 0.2 * sin(t * 7);
+
+    angle = rotation;
   }
 }

@@ -72,7 +72,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
     timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
     stopwatch.start();
 
-    emojiTimer = Timer.periodic(const Duration(milliseconds: 500), (Timer timer) {
+    emojiTimer = Timer.periodic(const Duration(milliseconds: 300), (Timer timer) {
       setState(() {
         emoji.add(Emoji(
             createdMS: DateTime.now().millisecondsSinceEpoch,
