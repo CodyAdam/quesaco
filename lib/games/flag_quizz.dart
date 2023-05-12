@@ -121,11 +121,11 @@ class _HomeState extends State<Flag> {
   }
 
   String formatDuration(Duration duration) {
-    int remaining = timeLimit - duration.inSeconds.remainder(60);
+    int remaining = timeLimit - duration.inSeconds.remainder(60)-1;
     if (remaining <= 0) {
       goToMenu();
       print("Ah ouais");
-      stopwatch.reset();
+      //stopwatch.reset();
     }
     return remaining.toString();
   }
