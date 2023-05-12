@@ -1,11 +1,11 @@
 // ignore_for_file: constant_identifier_names
 
-
 import 'package:flutter/foundation.dart';
 
 const String HOST_USERNAME = "Host";
 const String PLAYER_USERNAME = "Player";
 const String MINIGAME_ID = "MinigameId";
+const String UPCOMING_MINIGAMES_ID = "UpcomingMinigamesId";
 
 class GameState extends ChangeNotifier {
   Map<String, String> data = {};
@@ -24,12 +24,15 @@ class GameState extends ChangeNotifier {
     var minigameId = getInt(MINIGAME_ID);
     var host = getInt(HOST_USERNAME);
     var player = getInt(PLAYER_USERNAME);
+    var upcomingMinigamesId = getString(UPCOMING_MINIGAMES_ID);
     data.clear();
     setInt(MINIGAME_ID, minigameId ?? 0);
     setInt(HOST_USERNAME, host ?? 0);
     setInt(PLAYER_USERNAME, player ?? 0);
+    set(UPCOMING_MINIGAMES_ID, upcomingMinigamesId ?? "");
     notifyListeners();
   }
+
   void clear() {
     data.clear();
     notifyListeners();

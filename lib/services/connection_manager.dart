@@ -192,6 +192,9 @@ class Manager extends GameState {
 
   @override
   void set(String key, String value) {
+    if (getString(key) == value) {
+      return;
+    }
     sendKeyValue(key, value);
     super.set(key, value);
     notifyListeners();
@@ -199,6 +202,9 @@ class Manager extends GameState {
 
   @override
   void setInt(String key, int value) {
+    if (getInt(key) == value) {
+      return;
+    }
     sendKeyValue(key, value.toString());
     super.setInt(key, value);
     notifyListeners();
@@ -206,6 +212,9 @@ class Manager extends GameState {
 
   @override
   void setBool(String key, bool value) {
+    if (getBool(key) == value) {
+      return;
+    }
     sendKeyValue(key, value.toString());
     super.setBool(key, value);
     notifyListeners();
@@ -213,6 +222,9 @@ class Manager extends GameState {
 
   @override
   void setDouble(String key, double value) {
+    if (getDouble(key) == value) {
+      return;
+    }
     sendKeyValue(key, value.toString());
     super.setDouble(key, value);
     notifyListeners();
@@ -244,5 +256,32 @@ class Manager extends GameState {
       return;
     }
     log("Error when receiving message (message.split(\":\").length != 2): $message");
+  }
+
+  void goToNextGame() {
+    var str = getString(UPCOMING_MINIGAMES_ID);
+    if (str == null) {
+      if (getInt(MINIGAME_ID) == 0) {
+        return;
+      }
+      clearGamesData();
+      setInt(MINIGAME_ID, 0);
+      return;
+    }
+    var ids = str.split(",");
+    if (ids.isEmpty) {
+      if (getInt(MINIGAME_ID) == 0) {
+        return;
+      }
+      clearGamesData();
+      setInt(MINIGAME_ID, 0);
+      return;
+    }
+    var idsInt = ids.map((e) => int.parse(e)).toList();
+    var id = idsInt[0];
+    idsInt.removeAt(0);
+    clearGamesData();
+    set(UPCOMING_MINIGAMES_ID, idsInt.join(","));
+    setInt(MINIGAME_ID, id);
   }
 }

@@ -294,8 +294,7 @@ class Game3 extends FlameGame with TapCallbacks {
 
   void endTheGame() {
     cleanUpLevel();
-    m.clearGamesData();
-    m.setInt(MINIGAME_ID, 0);
+    m.goToNextGame();
   }
 
   @override
