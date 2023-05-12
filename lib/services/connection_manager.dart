@@ -264,6 +264,7 @@ class Manager extends GameState {
       if (getInt(MINIGAME_ID) == 0) {
         return;
       }
+      clearGamesData();
       setInt(MINIGAME_ID, 0);
       return;
     }
@@ -272,6 +273,7 @@ class Manager extends GameState {
       if (getInt(MINIGAME_ID) == 0) {
         return;
       }
+      clearGamesData();
       setInt(MINIGAME_ID, 0);
       return;
     }
