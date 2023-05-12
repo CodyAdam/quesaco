@@ -83,8 +83,8 @@ class _HomeState extends State<Flag> {
   void goToMenu() {
     setState(() {
       questionIndex = 0;
-      m.setInt(m.me, 0);
       endOfQuiz = false;
+      m.setInt("MinigameId", -1);
       m.clearGamesData();
     });
   }
@@ -121,10 +121,11 @@ class _HomeState extends State<Flag> {
   }
 
   String formatDuration(Duration duration) {
-    int remaining = timeLimit - duration.inSeconds.remainder(60);
+    int remaining = timeLimit - duration.inSeconds.remainder(60)-1;
     if (remaining <= 0) {
       goToMenu();
-      stopwatch.reset();
+      print("Ah ouais");
+      //stopwatch.reset();
     }
     return remaining.toString();
   }
@@ -135,6 +136,7 @@ class _HomeState extends State<Flag> {
       return const Scaffold(body: Center(child: Text("En attente ...")));
     } else {
     var goodList = getGoodOnes(list);
+    print(m.getInt("MinigameId"));
 
     return Scaffold(
       body: Center(
@@ -261,7 +263,7 @@ var map = {
   'al': 'Albanie',
   'dz': 'Algérie',
   'de': 'Allemagne',
-  'gb-en': 'Angleterre',
+  'gb-eng': 'Angleterre',
   'ao': 'Angola',
   'ai': 'Anguilla',
   'aq': 'Antarctique',
