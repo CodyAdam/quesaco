@@ -29,10 +29,15 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> gamesIdShuffled = [];
+    for (int i = 1; i <= 6; i++) {
+      gamesIdShuffled.add(i.toString());
+    }
+    gamesIdShuffled.shuffle();
     return Selector<Manager, int>(
         selector: (_, m) => m.getInt(MINIGAME_ID) ?? 0,
         builder: (context, id, child) {
-          if(Manager().audioPlayer.state == PlayerState.playing) {
+          if (Manager().audioPlayer.state == PlayerState.playing) {
             Manager().audioPlayer.stop();
           }
           if (id == 1) {
@@ -61,8 +66,7 @@ class _GamePageState extends State<GamePage> {
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == 5) {
             return Scaffold(
-                body: EmojiGame(),
-                bottomNavigationBar: gameScoreBar(context));
+                body: EmojiGame(), bottomNavigationBar: gameScoreBar(context));
           } else if (id == 6) {
             return Scaffold(
                 appBar: AppBar(
@@ -76,22 +80,97 @@ class _GamePageState extends State<GamePage> {
               appBar: AppBar(
                 title: const Text("Selectionnez un jeu"),
               ),
-              body: Center(
-                child: GridView.builder(
-                  itemCount: 6,
-                  padding: const EdgeInsets.all(20),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: .8,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return gameImageCard(() => selectGame(index + 1),
-                        'assets/images/thumb_game_${index + 1}.png');
-                  },
-                ),
-              ),
+              body: SingleChildScrollView(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 40, horizontal: 0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.5 *
+                                  .8 *
+                                  2.2,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: gameImageCard(
+                                  () => {
+                                        Manager().set(UPCOMING_MINIGAMES_ID,
+                                            gamesIdShuffled.join(",")),
+                                        Manager().goToNextGame(),
+                                      },
+                                  'assets/images/thumb_random.png'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.5 *
+                                  0.8, // Adjust the width as needed
+                              height: MediaQuery.of(context).size.width *
+                                  0.5, // Calculate height based on the width and aspect ratio
+                              child: gameImageCard(() => selectGame(1),
+                                  'assets/images/thumb_game_1.png'),
+                            ),
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.5 * .8,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: gameImageCard(() => selectGame(2),
+                                  'assets/images/thumb_game_2.png'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.5 * .8,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: gameImageCard(() => selectGame(3),
+                                  'assets/images/thumb_game_3.png'),
+                            ),
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.5 * .8,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: gameImageCard(() => selectGame(4),
+                                  'assets/images/thumb_game_4.png'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.5 * .8,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: gameImageCard(() => selectGame(5),
+                                  'assets/images/thumb_game_5.png'),
+                            ),
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.5 * .8,
+                              height: MediaQuery.of(context).size.width * 0.5,
+                              child: gameImageCard(() => selectGame(6),
+                                  'assets/images/thumb_game_6.png'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )),
               bottomNavigationBar: gameScoreBar(context),
             );
           }
