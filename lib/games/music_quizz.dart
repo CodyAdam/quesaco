@@ -215,7 +215,7 @@ List<List<Pair<String, bool>>> random(int seed) {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
   var random = Random(seed);
-  int numberOfQuestions = 1;
+  int numberOfQuestions = 10;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];
     var randomOrder = Random();
