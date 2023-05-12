@@ -62,8 +62,8 @@ class _HomeState extends State<Music> {
   void goToMenu() {
     setState(() {
       questionIndex = 0;
-      m.setInt(m.me, 0);
       endOfQuiz = false;
+      m.setInt("MinigameId", -1);
       m.clearGamesData();
     });
   }
@@ -215,7 +215,7 @@ List<List<Pair<String, bool>>> random(int seed) {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
   var random = Random(seed);
-  int numberOfQuestions = 10;
+  int numberOfQuestions = 1;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];
     var randomOrder = Random();

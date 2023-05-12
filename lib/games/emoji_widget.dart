@@ -45,7 +45,8 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   void goToMenu() {
     setState(() {
-      m.setInt(m.me, 0);
+      m.setInt("MinigameId", -1);
+      m.clearGamesData();
     });
   }
 
