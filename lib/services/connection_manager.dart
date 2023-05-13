@@ -281,7 +281,9 @@ class Manager extends GameState {
       return;
     }
     var ids = str.split(",");
-    if (ids.isEmpty) {
+    var idsInt = ids.map((e) => int.tryParse(e)).toList();
+    var id = idsInt[0];
+    if (ids.isEmpty || idsInt.isEmpty || id == null) {
       if (getInt(MINIGAME_ID) == 0) {
         return;
       }
@@ -289,8 +291,6 @@ class Manager extends GameState {
       setInt(MINIGAME_ID, 0);
       return;
     }
-    var idsInt = ids.map((e) => int.parse(e)).toList();
-    var id = idsInt[0];
     idsInt.removeAt(0);
     clearGamesData();
     set(UPCOMING_MINIGAMES_ID, idsInt.join(","));

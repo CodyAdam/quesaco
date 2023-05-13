@@ -10,14 +10,22 @@ import 'package:quesaco/models/game_state.dart';
 
 import '../services/connection_manager.dart';
 
+const int RANDOM_SEED = 2;
+
+
 class Game4 extends FlameGame with DragCallbacks {
   Manager m = Manager();
   late Image lavaImg;
   late Image rockImg;
+  late Image otherImg;
   late Image fireBallImg;
   late Image playerImg;
+  final Random r = Random(RANDOM_SEED);
+
   TimerComponent? timer;
   TimerComponent? timerStart;
+  TimerComponent? timerPositionLoop;
+  TimerComponent? timerFireball;
 
   SpriteComponent? lavaSprite;
   SpriteComponent? rockSprite;
@@ -30,6 +38,10 @@ class Game4 extends FlameGame with DragCallbacks {
   int countup = 0;
   bool isPlaying = false;
   List<Fireball> fireballs = [];
+  bool isAlive = true;
+
+  @override
+  Color backgroundColor() => const Color.fromARGB(0, 248, 249, 249);
 
   Future startSequence() async {
     cleanUpLevel();
@@ -39,6 +51,7 @@ class Game4 extends FlameGame with DragCallbacks {
       position: Vector2(size.x / 2, size.y / 2 - 25),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 32.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -52,6 +65,7 @@ class Game4 extends FlameGame with DragCallbacks {
       position: Vector2(size.x / 2, size.y / 2 + 40),
       textRenderer: TextPaint(
         style: const TextStyle(
+          color: Color.fromARGB(255, 52, 52, 55),
           fontSize: 60.0,
           fontFamily: 'Josefa Rounded',
         ),
@@ -135,20 +149,43 @@ class Game4 extends FlameGame with DragCallbacks {
         });
     add(timer!);
 
-    for (var i = 0; i < 10; i++) {
-      if (isPlaying) {
-        var f = Fireball(fireBallImg, size, 50, fireballs);
-        fireballs.add(f);
-        add(f);
-      }
-    }
+    timerFireball = TimerComponent(
+        period: 1,
+        repeat: true,
+        removeOnFinish: true,
+        onTick: () async {
+          if (isPlaying) {
+            for (var i = 0; i < countup ~/ 10 + 1; i++) {
+              var f = Fireball(
+                  fireBallImg, size, countup > 20 ? 200 : 100, fireballs, this);
+              fireballs.add(f);
+              add(f);
+            }
+          }
+        });
+    add(timerFireball!);
 
-    player = Player(playerImg, size);
-    add(player!);
     if (!m.isSolo) {
-      other = Player(playerImg, size);
+      other = Player(otherImg, size, this);
       add(other!);
     }
+    player = Player(playerImg, size, this);
+    add(player!);
+    timerPositionLoop = TimerComponent(
+        period: 0.1,
+        repeat: true,
+        removeOnFinish: true,
+        onTick: () async {
+          if (isPlaying && player != null) {
+            var topLeftBound =
+                (size / 2) - Vector2(size.x * .75 / 2, size.x * .75 / 2);
+            Vector2 pos = (player!.position - topLeftBound) / (size.x * .75);
+            m.setDouble("${m.me}_posx", pos.x);
+            m.setDouble("${m.me}_posy", pos.y);
+          }
+          await Future.delayed(const Duration(milliseconds: 500));
+        });
+    add(timerPositionLoop!);
   }
 
   @override
@@ -174,9 +211,30 @@ class Game4 extends FlameGame with DragCallbacks {
           .1 * size.x * .01 * cos(t * 7) + .25 * size.x * cos(t * .3);
       lavaSprite!.position = (size / 2) + Vector2(offsetX, offsetY);
     }
+    if (!isPlaying) {
+      return;
+    }
+
+    if (other != null) {
+      var posx = m.getDouble("${m.other}_posx");
+      var posy = m.getDouble("${m.other}_posy");
+      if (posx != null && posy != null) {
+        Vector2 otherPos = Vector2(posx, posy); // in percent relative to bounds
+        var topLeftBound =
+            (size / 2) - Vector2(size.x * .75 / 2, size.x * .75 / 2);
+        other!.position = topLeftBound + otherPos * size.x * .75;
+      }
+    }
+
+    if (m.getBool("${m.other}_dead") == true) {
+      endTheGame();
+      return;
+    }
 
     for (var f in fireballs) {
-      if (f.position.distanceTo(player!.position) < 50) {
+      if (f.position.distanceTo(player!.position) < size.x * .07) {
+        isAlive = false;
+        m.setBool("${m.me}_dead", true);
         endTheGame();
       }
     }
@@ -190,7 +248,9 @@ class Game4 extends FlameGame with DragCallbacks {
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    if (player != null) player!.position += event.delta;
+    if (player != null && isPlaying) {
+      player!.position += event.delta;
+    }
   }
 
   @override
@@ -209,10 +269,78 @@ class Game4 extends FlameGame with DragCallbacks {
       remove(timerCount!);
     }
     timerCount = null;
+    if (timerPositionLoop != null) {
+      remove(timerPositionLoop!);
+    }
+    timerPositionLoop = null;
+    if (timerFireball != null) {
+      remove(timerFireball!);
+    }
+    timerFireball = null;
   }
 
-  void endTheGame() {
+  void endTheGame() async {
+    isPlaying = false;
+    if (timer != null) {
+      timer!.timer.stop();
+    }
+
+    var addScore = countup * 10;
+    var endText = TextComponent(
+      text: 'Vous avez survécu ${countup}s',
+      position: Vector2(size.x / 2, size.y / 2),
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          fontSize: 18.0,
+          fontFamily: 'Josefa Rounded',
+        ),
+      ),
+      anchor: Anchor.center,
+    );
+    var endTextScore = TextComponent(
+      text: '+${countup * 10} points',
+      position: Vector2(size.x / 2, size.y / 2 + 25),
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          fontSize: 32.0,
+          fontFamily: 'Josefa Rounded',
+        ),
+      ),
+      anchor: Anchor.center,
+    );
+    if (!m.isSolo && isAlive) {
+      var endLastAlive = TextComponent(
+        text: 'Dernier survivant',
+        position: Vector2(size.x / 2, size.y / 2 + 150),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            fontSize: 18.0,
+            fontFamily: 'Josefa Rounded',
+          ),
+        ),
+        anchor: Anchor.center,
+      );
+      var endLastAlivePts = TextComponent(
+        text: '+300 points',
+        position: Vector2(size.x / 2, size.y / 2 + 175),
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            fontSize: 32.0,
+            fontFamily: 'Josefa Rounded',
+          ),
+        ),
+        anchor: Anchor.center,
+      );
+      add(endLastAlive);
+      add(endLastAlivePts);
+      addScore += 300;
+    }
+    m.setInt(m.me, m.getInt(m.me)! + addScore);
+    add(endText);
+    add(endTextScore);
+    await Future.delayed(const Duration(seconds: 4));
     cleanUpLevel();
+    m.clearGamesData();
     m.goToNextGame();
   }
 
@@ -224,37 +352,38 @@ class Game4 extends FlameGame with DragCallbacks {
     rockImg = await images.load('rock.png');
     fireBallImg = await images.load('fireball.png');
     playerImg = await images.load('Hot Face.png');
+    otherImg = await images.load('Cold Face.png');
 
     await startSequence();
   }
 }
 
-Vector2 getRandomPointOutside(Vector2 size) {
+Vector2 getRandomPointOutside(Vector2 size, Random r) {
   double margin = size.x * .2;
-  if (Random().nextBool()) {
+  if (r.nextBool()) {
     // top or bottom
-    if (Random().nextBool()) {
+    if (r.nextBool()) {
       // top
-      return Vector2(Random().nextDouble() * size.x - margin, 0);
+      return Vector2(r.nextDouble() * size.x - margin, 0);
     } else {
       // bottom
-      return Vector2(Random().nextDouble() * size.x + margin, size.y);
+      return Vector2(r.nextDouble() * size.x + margin, size.y);
     }
   } else {
     // left or right
-    if (Random().nextBool()) {
+    if (r.nextBool()) {
       // left
-      return Vector2(0, Random().nextDouble() * size.y - margin);
+      return Vector2(0, r.nextDouble() * size.y - margin);
     } else {
       // right
-      return Vector2(size.x, Random().nextDouble() * size.y + margin);
+      return Vector2(size.x, r.nextDouble() * size.y + margin);
     }
   }
 }
 
-Vector2 getRandomPointInside(Vector2 size) {
+Vector2 getRandomPointInside(Vector2 size, Random r) {
   final boundTopLeft = (size / 2) - Vector2(size.x * .75 / 2, size.x * .75 / 2);
-  return boundTopLeft + Vector2.random() * size.x * .75;
+  return boundTopLeft + Vector2.random(r) * size.x * .75;
 }
 
 Vector2 directionFromTo(Vector2 from, Vector2 to) {
@@ -264,42 +393,36 @@ Vector2 directionFromTo(Vector2 from, Vector2 to) {
 class Fireball extends SpriteComponent {
   final double speed;
   final Vector2 psize;
+  final Game4 game;
   late Vector2 direction;
   final List<SpriteComponent> fireballs;
-  Fireball(Image img, this.psize, this.speed, this.fireballs)
+  Fireball(Image img, this.psize, this.speed, this.fireballs, this.game)
       : super.fromImage(img,
             size: Vector2.all(psize.x * .1),
-            position: getRandomPointOutside(psize)) {
-    direction = directionFromTo(position, getRandomPointInside(psize));
+            position: getRandomPointOutside(psize, game.r)) {
+    direction = directionFromTo(position, getRandomPointInside(psize, game.r));
     anchor = Anchor.center;
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+    if (!game.isPlaying) return;
     position += direction * speed * dt;
     angle += 4 * dt;
-
-    // remove if outside screen
-    if (position.x < 0 ||
-        position.x > psize.x ||
-        position.y < 0 ||
-        position.y > psize.y) {
-      fireballs.remove(this);
-      remove(this);
-    }
   }
 }
 
 class Player extends SpriteComponent {
   final Vector2 psize;
+  final Game4 game;
   late Vector2 topLeftBound;
   late Vector2 bottomRightBound;
   double t = 0;
-  Player(Image img, this.psize)
+  Player(Image img, this.psize, this.game)
       : super.fromImage(img,
             size: Vector2.all(psize.x * .1),
-            position: getRandomPointInside(psize)) {
+            position: Vector2(psize.x / 2, psize.y / 2)) {
     anchor = Anchor.center;
     topLeftBound = (psize / 2) - Vector2(psize.x * .75 / 2, psize.x * .75 / 2);
     bottomRightBound = topLeftBound + Vector2.all(psize.x * .75);
@@ -307,8 +430,9 @@ class Player extends SpriteComponent {
 
   @override
   void update(double dt) {
-    t += dt;
     super.update(dt);
+    if (!game.isPlaying) return;
+    t += dt;
     if (position.x < topLeftBound.x) {
       position.x = topLeftBound.x;
     }
