@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:quesaco/widget/answer.dart';
 
+import '../models/game_state.dart';
 import '../services/connection_manager.dart';
 
 class Flag extends StatefulWidget {
@@ -18,11 +19,11 @@ class Flag extends StatefulWidget {
 class _HomeState extends State<Flag> {
   Timer? timer;
   Stopwatch stopwatch = Stopwatch();
-  int timeLimit = 60;
+  int timeLimit = 45;
   String timeRemaining = "";
 
   Manager m = Manager();
-  int randomSeed = Random().nextInt(1000);
+  Random r = Random(Manager().getInt(SEED) ?? 0);
 
   late List<List<Pair<String, bool>>> list;
   bool endOfQuiz = false;
@@ -84,8 +85,8 @@ class _HomeState extends State<Flag> {
     setState(() {
       questionIndex = 0;
       endOfQuiz = false;
-      m.setInt("MinigameId", -1);
       m.clearGamesData();
+      m.setInt("MinigameId", -1);
     });
   }
 
@@ -93,13 +94,7 @@ class _HomeState extends State<Flag> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (m.isHost) {
-        m.setInt("randomSeed", randomSeed);
-      }
-      while (m.getInt("randomSeed") == null) {
-        await Future.delayed(const Duration(seconds: 1));
-      }
-      list = random(m.getInt("randomSeed")!);
+      list = random(r);
       gameStarted = true;
       timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
       stopwatch.start();
@@ -229,17 +224,15 @@ class Pair<A, B> {
   String toString() => '($_country, $_goodOne)';
 }
 
-List<List<Pair<String, bool>>> random(int seed) {
+List<List<Pair<String, bool>>> random(Random r) {
   var listOfList = <List<Pair<String, bool>>>[];
   var keys = map.keys.toList();
-  var random = Random(seed);
   int numberOfQuestions = 50;
   while (keys.length > map.length - numberOfQuestions * 4) {
     var countriesTrueOrNot = <Pair<String, bool>>[];
-    var randomOrder = Random();
-    var order = randomOrder.nextInt(4);
+    var order = r.nextInt(4);
     for (int i = 0; i < 4; i++) {
-      var index = random.nextInt(keys.length);
+      var index = r.nextInt(keys.length);
       var key = keys[index];
       keys[index] = keys.last;
       keys.length--;

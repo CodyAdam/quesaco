@@ -12,7 +12,6 @@ import 'package:quesaco/models/game_state.dart';
 
 import '../services/connection_manager.dart';
 
-const int RANDOM_SEED = 2;
 
 class Game4 extends FlameGame with DragCallbacks {
   Manager m = Manager();
@@ -21,7 +20,7 @@ class Game4 extends FlameGame with DragCallbacks {
   late Image otherImg;
   late Image fireBallImg;
   late Image playerImg;
-  final Random r = Random(RANDOM_SEED);
+  Random r = Random(Manager().getInt(SEED) ?? 0);
 
   TimerComponent? timer;
   TimerComponent? timerStart;

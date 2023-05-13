@@ -11,8 +11,8 @@ import '../models/game_state.dart';
 import '../services/connection_manager.dart';
 
 class Game3 extends FlameGame with TapCallbacks {
-  Random r = Random(34);
   Manager m = Manager();
+  Random r = Random(Manager().getInt(SEED) ?? 0);
   List<Image> faces = [];
   TimerComponent? timer;
   TimerComponent? timerStart;

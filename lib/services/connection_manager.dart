@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' hide log;
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
@@ -237,7 +238,7 @@ class Manager extends GameState {
   }
 
   void _onReceiveMessage(dynamic message) async {
-    if (message == "start") {
+    if (message == "start" || !isGameStarted) {
       init();
       isGameStarted = true;
       isSolo = false;
@@ -277,6 +278,7 @@ class Manager extends GameState {
         return;
       }
       clear();
+      setInt(SEED, Random().nextInt(100000));
       setInt(MINIGAME_ID, 0);
       return;
     }
@@ -288,6 +290,7 @@ class Manager extends GameState {
         return;
       }
       clear();
+      setInt(SEED, Random().nextInt(100000));
       setInt(MINIGAME_ID, 0);
       return;
     }

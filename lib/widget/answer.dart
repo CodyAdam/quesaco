@@ -29,7 +29,7 @@ class Answer extends StatelessWidget {
             ),
           ],
           color: answerColor,
-          border: Border.all(color: Color.fromARGB(41, 76, 76, 76)),
+          border: Border.all(color: const Color.fromARGB(41, 76, 76, 76)),
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Text(

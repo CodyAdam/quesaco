@@ -80,7 +80,7 @@ class _GamePageState extends State<GamePage> {
                 body: const Text("Game 6"),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == -1) {
-            return Scaffold(body: ScoreWidget());
+            return Scaffold(body: scoreWidget());
           } else {
             return Scaffold(
               appBar: AppBar(
