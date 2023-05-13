@@ -11,12 +11,12 @@ class MenuBackground extends FlameGame {
   Future<void> onLoad() async {
     await super.onLoad();
     List<Image> bgImages = [];
-    bgImages.add(await images.load('thumb_game_1.png'));
-    bgImages.add(await images.load('thumb_game_2.png'));
-    bgImages.add(await images.load('thumb_game_3.png'));
-    bgImages.add(await images.load('thumb_game_4.png'));
-    bgImages.add(await images.load('thumb_game_5.png'));
-    bgImages.add(await images.load('thumb_game_6.png'));
+    bgImages.add(await images.load('card_game_1.png'));
+    bgImages.add(await images.load('card_game_2.png'));
+    bgImages.add(await images.load('card_game_3.png'));
+    bgImages.add(await images.load('card_game_4.png'));
+    bgImages.add(await images.load('card_game_5.png'));
+    bgImages.add(await images.load('card_game_6.png'));
 
     // col -2
     bgImages.shuffle();
