@@ -82,7 +82,7 @@ class _HomeState extends State<Music> {
       gameStarted = true;
       timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
       stopwatch.start();
-      });
+    });
   }
 
   @override
@@ -165,23 +165,22 @@ class _HomeState extends State<Music> {
               height: 40,
             ),
             ...list[questionIndex].map(
-                  (answer) =>
-                  Answer(
-                    answerText: map[answer.game],
-                    answerTap: () {
-                      if (answerWasSelected) {
-                        return;
-                      }
-                      questionAnswered(answer.goodOne, answer.game);
-                    },
-                    answerColor: answerWasSelected
-                        ? answer.goodOne
-                        ? const Color.fromARGB(255, 122, 242, 126)
+              (answer) => Answer(
+                answerText: map[answer.game],
+                answerTap: () {
+                  if (answerWasSelected) {
+                    return;
+                  }
+                  questionAnswered(answer.goodOne, answer.game);
+                },
+                answerColor: answerWasSelected
+                    ? answer.goodOne
+                        ? const Color.fromARGB(255, 178, 237, 180)
                         : answer.game.compareTo(answers[questionIndex]) == 0
-                        ? const Color.fromARGB(255, 244, 125, 116)
-                        : null
-                        : null,
-                  ),
+                            ? const Color.fromARGB(255, 236, 171, 167)
+                            : const Color.fromARGB(255, 255, 255, 255)
+                    : const Color.fromARGB(255, 255, 255, 255),
+              ),
             ),
             const SizedBox(
               height: 20.0,

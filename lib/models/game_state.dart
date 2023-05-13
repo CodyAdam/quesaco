@@ -35,6 +35,9 @@ class GameState extends ChangeNotifier {
 
   void clear() {
     data.clear();
+    setInt(MINIGAME_ID, 0);
+    setInt(HOST_USERNAME, 0);
+    setInt(PLAYER_USERNAME, 0);
     notifyListeners();
   }
 

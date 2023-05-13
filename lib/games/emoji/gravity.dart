@@ -28,7 +28,7 @@ extension EmojiTypeUtil on EmojiType {
       case EmojiType.idiot:
         return "assets/emoji/laid.png";
       case EmojiType.love:
-        return "assets/emoji/amoureux.png";
+        return "assets/images/Bomb.png";
       case EmojiType.laught:
         return "assets/emoji/en-riant.png";
       case EmojiType.angry:

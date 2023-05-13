@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +43,7 @@ class _GamePageState extends State<GamePage> {
           if (Manager().audioPlayer.state == PlayerState.playing) {
             Manager().audioPlayer.stop();
           }
+          log("Game id: $id");
           if (id == 1) {
             return Scaffold(
                 appBar: AppBar(
@@ -77,9 +80,7 @@ class _GamePageState extends State<GamePage> {
                 body: const Text("Game 6"),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == -1) {
-            return Scaffold(
-                body: ScoreWidget(),
-                bottomNavigationBar: gameScoreBar(context));
+            return Scaffold(body: ScoreWidget());
           } else {
             return Scaffold(
               appBar: AppBar(
@@ -176,7 +177,6 @@ class _GamePageState extends State<GamePage> {
                       ],
                     ),
                   )),
-              bottomNavigationBar: gameScoreBar(context),
             );
           }
         });

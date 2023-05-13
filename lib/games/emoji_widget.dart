@@ -73,7 +73,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
     timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
     stopwatch.start();
 
-    emojiTimer = Timer.periodic(const Duration(milliseconds: 300), (Timer timer) {
+    emojiTimer = Timer.periodic(const Duration(milliseconds: 350), (Timer timer) {
       setState(() {
         emoji.add(Emoji(
             createdMS: DateTime.now().millisecondsSinceEpoch,
@@ -89,9 +89,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   @override
   void dispose() {
-    if (emojiTimer != null) {
-      emojiTimer.cancel();
-    }
+    emojiTimer.cancel();
     timer.cancel();
     super.dispose();
   }

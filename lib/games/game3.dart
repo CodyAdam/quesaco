@@ -6,11 +6,12 @@ import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:quesaco/models/game_state.dart';
 
+import '../models/game_state.dart';
 import '../services/connection_manager.dart';
 
 class Game3 extends FlameGame with TapCallbacks {
+  Random r = Random(34);
   Manager m = Manager();
   List<Image> faces = [];
   TimerComponent? timer;
@@ -153,15 +154,11 @@ class Game3 extends FlameGame with TapCallbacks {
       count = 300;
     }
 
-    var suspectImage = faces[Random().nextInt(faces.length)];
+    var suspectImage = faces[r.nextInt(faces.length)];
     for (var i = 0; i < count; i++) {
       // random position between 0 and 1
-      var randomPosition = Vector2(
-          Random().nextDouble() * size.x * .9 + size.x * .05,
-          Random().nextDouble() * size.x * .7 +
-              size.y -
-              size.x * .7 -
-              size.x * .2);
+      var randomPosition = Vector2(r.nextDouble() * size.x * .9 + size.x * .05,
+          r.nextDouble() * size.x * .7 + size.y - size.x * .7 - size.x * .2);
       var speed = 0;
       if (level == 3) {
         speed = 10;
@@ -170,15 +167,15 @@ class Game3 extends FlameGame with TapCallbacks {
       } else if (level == 5) {
         speed = 40;
       }
-      var image = faces[Random().nextInt(faces.length)];
+      var image = faces[r.nextInt(faces.length)];
       while (image == suspectImage) {
-        image = faces[Random().nextInt(faces.length)];
+        image = faces[r.nextInt(faces.length)];
       }
 
       var face = Face(
           image,
           randomPosition,
-          speed.toDouble(),
+          size.x * speed.toDouble() / 200,
           size.x * .07,
           Vector2(0 * size.x * .9 + size.x * .05,
               0 * size.x * .7 + size.y - size.x * .7 - size.x * .2),
@@ -188,7 +185,7 @@ class Game3 extends FlameGame with TapCallbacks {
         suspect = Face(
             suspectImage,
             randomPosition,
-            speed.toDouble(),
+            size.x * speed.toDouble() / 200,
             size.x * .07,
             Vector2(0 * size.x * .9 + size.x * .05,
                 0 * size.x * .7 + size.y - size.x * .7 - size.x * .2),
@@ -294,7 +291,8 @@ class Game3 extends FlameGame with TapCallbacks {
 
   void endTheGame() {
     cleanUpLevel();
-    m.goToNextGame();
+    m.clearGamesData();
+    m.setInt(MINIGAME_ID, -1);
   }
 
   @override
@@ -315,13 +313,13 @@ class Face extends SpriteComponent {
   double speed = 0;
   Vector2 boundTopLeft = Vector2(0, 0);
   Vector2 boundBottomRight = Vector2(0, 0);
+  Random r = Random();
   Face(Image image, Vector2 position, this.speed, double size,
       this.boundTopLeft, this.boundBottomRight)
       : super.fromImage(image, size: Vector2(size, size), position: position) {
     anchor = Anchor.center;
     // random direction between -1 and 1
-    direction = Vector2(Random().nextDouble() - .5, Random().nextDouble() - .5)
-        .normalized();
+    direction = Vector2(r.nextDouble() - .5, r.nextDouble() - .5).normalized();
   }
 
   @override
@@ -332,10 +330,9 @@ class Face extends SpriteComponent {
     }
     countdownDirection -= dt;
     if (countdownDirection <= 0) {
-      countdownDirection = Random().nextDouble() * 2;
+      countdownDirection = r.nextDouble() * 2;
       direction =
-          Vector2(Random().nextDouble() - .5, Random().nextDouble() - .5)
-              .normalized();
+          Vector2(r.nextDouble() - .5, r.nextDouble() - .5).normalized();
     }
     position += direction * speed * dt;
     if (position.x < boundTopLeft.x) {

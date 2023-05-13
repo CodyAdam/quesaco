@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 import 'dart:math' hide log;
 
@@ -11,7 +13,6 @@ import 'package:quesaco/models/game_state.dart';
 import '../services/connection_manager.dart';
 
 const int RANDOM_SEED = 2;
-
 
 class Game4 extends FlameGame with DragCallbacks {
   Manager m = Manager();
@@ -156,8 +157,8 @@ class Game4 extends FlameGame with DragCallbacks {
         onTick: () async {
           if (isPlaying) {
             for (var i = 0; i < countup ~/ 10 + 1; i++) {
-              var f = Fireball(
-                  fireBallImg, size, countup > 20 ? 200 : 100, fireballs, this);
+              var f = Fireball(fireBallImg, size,
+                  size.x / 400 * (countup > 20 ? 200 : 100), fireballs, this);
               fireballs.add(f);
               add(f);
             }
@@ -341,7 +342,7 @@ class Game4 extends FlameGame with DragCallbacks {
     await Future.delayed(const Duration(seconds: 4));
     cleanUpLevel();
     m.clearGamesData();
-    m.goToNextGame();
+    m.setInt(MINIGAME_ID, -1);
   }
 
   @override

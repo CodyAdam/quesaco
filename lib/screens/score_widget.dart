@@ -7,43 +7,55 @@ class ScoreWidget extends StatelessWidget {
 
   Manager m = Manager();
 
-  ScoreWidget();
+  ScoreWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if(m.getInt(m.me)! >= m.getInt(m.other)!) {
+    if (m.getInt(m.me)! >= m.getInt(m.other)!) {
       hasWon = true;
     }
+    // wait 5 sec then call
+    Future.delayed(const Duration(seconds: 5), () {
+      m.clearGamesData();
+
+      m.goToNextGame();
+    });
     return Scaffold(
         body: Center(
-        child : Column(
+            child: Column(
       children: [
-        Padding(padding: EdgeInsets.only(top: 350)),
-        if (!m.isSolo) ...[
+        const Padding(padding: EdgeInsets.only(top: 300)),
         Text(
-          'Vous avez ${hasWon ? "gagné" : "perdu"} !',
-          style: TextStyle(fontSize: 32, color: hasWon ? Colors.green : Colors.red),
+          "Fin de la partie",
+          style: const TextStyle(fontSize: 40),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 50),
+        if (!m.isSolo) ...[
+          Text(
+            'Vous avez ${hasWon ? "gagné" : "perdu"} !',
+            style: TextStyle(
+                fontSize: 32, color: hasWon ? Colors.green : Colors.red),
+          ),
+          const SizedBox(height: 10),
         ],
         if (m.isSolo) ...[
           Text(
             'Bien joué !',
-            style: TextStyle(fontSize: 32, color: hasWon ? Colors.green : Colors.red),
+            style: TextStyle(
+                fontSize: 32, color: hasWon ? Colors.green : Colors.red),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
         Text(
           'Votre score : ${m.getInt(m.me)}',
-          style: TextStyle(fontSize: 20),
+          style: const TextStyle(fontSize: 20),
         ),
         if (!m.isSolo) ...[
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             'Score adverse : ${m.getInt(m.other)}',
-            style: TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20),
           ),
-
         ],
       ],
     )));

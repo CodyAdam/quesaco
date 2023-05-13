@@ -16,7 +16,7 @@ class Flag extends StatefulWidget {
 }
 
 class _HomeState extends State<Flag> {
-  late Timer timer;
+  Timer? timer;
   Stopwatch stopwatch = Stopwatch();
   int timeLimit = 60;
   String timeRemaining = "";
@@ -108,7 +108,9 @@ class _HomeState extends State<Flag> {
 
   @override
   void dispose() {
-    timer.cancel();
+    if (timer != null) {
+      timer!.cancel();
+    }
     super.dispose();
   }
 
@@ -121,10 +123,9 @@ class _HomeState extends State<Flag> {
   }
 
   String formatDuration(Duration duration) {
-    int remaining = timeLimit - duration.inSeconds.remainder(60)-1;
+    int remaining = timeLimit - duration.inSeconds.remainder(60) - 1;
     if (remaining <= 0) {
       goToMenu();
-      print("Ah ouais");
       //stopwatch.reset();
     }
     return remaining.toString();
@@ -132,75 +133,81 @@ class _HomeState extends State<Flag> {
 
   @override
   Widget build(BuildContext context) {
-    if(!gameStarted) {
+    if (!gameStarted) {
       return const Scaffold(body: Center(child: Text("En attente ...")));
     } else {
-    var goodList = getGoodOnes(list);
-    print(m.getInt("MinigameId"));
+      var goodList = getGoodOnes(list);
 
-    return Scaffold(
-      body: Center(
-        child: Column(children: [
-          Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                timeRemaining,
-                textAlign: TextAlign.center,
-              )),
-          Container(
-            width: 500.0,
-            height: 200.0,
-            margin: const EdgeInsets.only(
-                bottom: 10.0, top: 20.0, left: 30.0, right: 30.0),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 50.0, vertical: 20.0),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
-                image: DecorationImage(
-                  image:
-                      AssetImage('assets/flags/${goodList[questionIndex]}.png'),
-                  fit: BoxFit.scaleDown,
-                )),
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          ...list[questionIndex].map(
-            (answer) => Answer(
-              answerText: map[answer.country],
-              answerTap: () {
-                if (answerWasSelected) {
-                  return;
-                }
-                questionAnswered(answer.goodOne, answer.country);
-              },
-              answerColor: answerWasSelected
-                  ? answer.goodOne
-                      ? const Color.fromARGB(255, 122, 242, 126)
-                      : answer.country.compareTo(answers[questionIndex]) == 0
-                          ? const Color.fromARGB(255, 244, 125, 116)
-                          : null
-                  : null,
+      return Scaffold(
+        body: Center(
+          child: Column(children: [
+            Container(
+              height: 200.0,
+              width: 300.0,
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(0.0, 2.0),
+                        blurRadius: 6.0)
+                  ],
+                  image: DecorationImage(
+                    image: AssetImage(
+                        'assets/flags/${goodList[questionIndex]}.png'),
+                    fit: BoxFit.scaleDown,
+                  )),
             ),
-          ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(100.0, 40.0)),
-              onPressed: () {
-                if (!answerWasSelected) {
-                  return;
-                }
-                nextQuestion();
-              },
-              child: Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
-        ]),
-      ),
-    );
-  }
+            Padding(
+                padding: const EdgeInsets.only(top: 5.0),
+                child: Text(
+                  timeRemaining,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 30.0, fontWeight: FontWeight.bold),
+                )),
+            const SizedBox(
+              height: 20,
+            ),
+            ...list[questionIndex].map(
+              (answer) => Answer(
+                answerText: map[answer.country],
+                answerTap: () {
+                  if (answerWasSelected) {
+                    return;
+                  }
+                  questionAnswered(answer.goodOne, answer.country);
+                },
+                answerColor: answerWasSelected
+                    ? answer.goodOne
+                        ? const Color.fromARGB(255, 178, 237, 180)
+                        : answer.country.compareTo(answers[questionIndex]) == 0
+                            ? const Color.fromARGB(255, 236, 171, 167)
+                            : const Color.fromARGB(255, 255, 255, 255)
+                    : const Color.fromARGB(255, 255, 255, 255),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(100.0, 40.0)),
+                onPressed: () {
+                  if (!answerWasSelected) {
+                    return;
+                  }
+                  nextQuestion();
+                },
+                child:
+                    Text(endOfQuiz ? 'Retour au menu' : 'Question suivante')),
+          ]),
+        ),
+      );
+    }
   }
 }
 
