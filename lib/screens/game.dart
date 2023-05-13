@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quesaco/games/game3.dart';
 import 'package:quesaco/games/music_quizz.dart';
-import 'package:quesaco/screens/score_widget.dart';
+import 'package:quesaco/widget/score_widget.dart';
 
 import '../games/emoji_widget.dart';
 import '../games/flag_quizz.dart';
