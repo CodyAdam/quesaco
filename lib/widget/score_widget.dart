@@ -16,34 +16,27 @@ Widget scoreWidget() {
     m.audioPlayer.play(AssetSource(music));
   }
 
-  if (!m.hasUpcomingGames()) {
-    if (m.getInt(m.me)! >= m.getInt(m.other)!) {
-      hasWon = true;
-    }
-    if (m.isSolo) {
-      hasWon = true;
-    }
+  if (m.getInt(m.me)! >= m.getInt(m.other)!) {
+    hasWon = true;
+  }
+  if (m.isSolo) {
+    hasWon = true;
+  }
 
-    if (hasWon) {
-      loadAndPlayMusic("musics/win.mp3");
-    } else {
-      loadAndPlayMusic("musics/lost.mp3");
-    }
+  if (hasWon) {
+    loadAndPlayMusic("musics/win.mp3");
+  } else {
+    loadAndPlayMusic("musics/lost.mp3");
   }
 
   // wait 5 sec then call
-  Future.delayed(Duration(seconds: m.hasUpcomingGames() ? 0 : 5), () {
+  Future.delayed(Duration(seconds: 5), () {
     m.clearGamesData();
     if (m.isHost) {
       m.goToNextGame();
     }
   });
-  if (m.hasUpcomingGames()) {
-    return const Scaffold(
-        body: Center(
-      child: CircularProgressIndicator(),
-    ));
-  }
+
   return Scaffold(
       body: Center(
           child: Column(
