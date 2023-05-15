@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'dart:math' hide log;
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
@@ -207,12 +208,22 @@ class Game6 extends FlameGame with TapCallbacks {
     }
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   void endTheGame() async {
     _gyroStream.cancel();
     if (player != null) {
       remove(player!);
     }
     isPlaying = false;
+    m.audioPlayer.stop();
     if (timer != null) {
       timer!.timer.stop();
     }
@@ -265,6 +276,8 @@ class Game6 extends FlameGame with TapCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    m.audioPlayer.stop();
+
     playerImg = await images.load('Face with Raised Eyebrow.png');
     var fillImg = await images.load('Face with Raised Eyebrow.png');
     _gyroStream = gyroscopeEvents.listen((GyroscopeEvent event) {
@@ -293,6 +306,57 @@ class Game6 extends FlameGame with TapCallbacks {
     current = maps[r.nextInt(maps.length)];
 
     await startSequence();
+    loadAndPlayMusic("musics/game.mp3");
+
+  }
+}
+
+class Map extends SpriteComponent {
+  List<Target> targets = [];
+  Map(Image image, Vector2 size, Vector2 position)
+      : super.fromImage(image, size: size, position: position) {
+    anchor = Anchor.center;
+  }
+}
+
+class Target extends SpriteComponent {
+  bool isDone = false;
+  Vector2 mapSize;
+  Vector2 canvasSize;
+  Target(Image image, double size, Vector2 positionRel, this.mapSize,
+      this.canvasSize)
+      : super.fromImage(image,
+            size: Vector2(50, 50), position: Vector2.zero()) {
+    this.size = Vector2.all(size) * canvasSize.y;
+    position = Vector2(
+      canvasSize.x / 2 + mapSize.x * positionRel.x / 2,
+      canvasSize.y / 2 + mapSize.y * positionRel.y / 2,
+    );
+    anchor = Anchor.center;
+    var opa = 0.0;
+    paint = Paint()
+      ..colorFilter = ColorFilter.matrix([
+        opa,
+        0,
+        0,
+        0,
+        0,
+        0,
+        opa,
+        0,
+        0,
+        0,
+        0,
+        0,
+        opa,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+      ]);
   }
 }
 

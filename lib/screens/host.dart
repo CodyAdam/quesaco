@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quesaco/screens/game.dart';
@@ -13,6 +14,8 @@ class HostPage extends StatefulWidget {
 }
 
 class _HostPageState extends State<HostPage> {
+  Manager m = Manager();
+
   @override
   void initState() {
     super.initState();
@@ -25,8 +28,18 @@ class _HostPageState extends State<HostPage> {
     Manager().refreshRoom();
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadAndPlayMusic("musics/main_menu.mp3");
     return Scaffold(
         appBar: AppBar(
           title: const Text('Créer une Room'),

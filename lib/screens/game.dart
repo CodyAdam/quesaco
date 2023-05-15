@@ -25,9 +25,22 @@ class GamePage extends StatefulWidget {
   }
 }
 
+
 class _GamePageState extends State<GamePage> {
+  Manager m = Manager();
+
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   @override
   Widget build(BuildContext context) {
+
     List<String> gamesIdShuffled = [];
     for (int i = 1; i <= 6; i++) {
       gamesIdShuffled.add(i.toString());
@@ -36,9 +49,9 @@ class _GamePageState extends State<GamePage> {
     return Selector<Manager, int>(
         selector: (_, m) => m.getInt(MINIGAME_ID) ?? 0,
         builder: (context, id, child) {
-          if (Manager().audioPlayer.state == PlayerState.playing) {
-            Manager().audioPlayer.stop();
-          }
+          // if (Manager().audioPlayer.state == PlayerState.playing) {
+          //   Manager().audioPlayer.stop();
+          // }
           log("Game id: $id");
           if (id == 1) {
             return Scaffold(
@@ -74,6 +87,7 @@ class _GamePageState extends State<GamePage> {
           } else if (id == -1) {
             return Scaffold(body: scoreWidget());
           } else {
+            loadAndPlayMusic("musics/main_menu.mp3");
             return Scaffold(
               appBar: AppBar(
                 title: const Text("Selectionnez un jeu"),

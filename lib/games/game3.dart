@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' hide log;
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
@@ -289,8 +290,18 @@ class Game3 extends FlameGame with TapCallbacks {
     timerCount = null;
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   void endTheGame() {
     cleanUpLevel();
+    m.audioPlayer.stop();
     m.clearGamesData();
     m.setInt(MINIGAME_ID, -1);
   }
@@ -298,12 +309,15 @@ class Game3 extends FlameGame with TapCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    m.audioPlayer.stop();
+
     faces.add(await images.load('Disguised Face.png'));
     faces.add(await images.load('Angry Face with Horns.png'));
     faces.add(await images.load('Face with Head-Bandage.png'));
     faces.add(await images.load('Ghost.png'));
     faces.add(await images.load('Cold Face.png'));
     await startSequence();
+    loadAndPlayMusic("musics/game.mp3");
   }
 }
 

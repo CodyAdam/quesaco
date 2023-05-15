@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:quesaco/screens/game.dart';
@@ -18,8 +19,21 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+  Manager m = Manager();
+
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    loadAndPlayMusic("musics/main_menu.mp3");
     return Scaffold(
       body: Stack(
         children: [

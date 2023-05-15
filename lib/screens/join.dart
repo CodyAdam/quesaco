@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,8 @@ class JoinPage extends StatefulWidget {
 }
 
 class _JoinPageState extends State<JoinPage> {
+  Manager m = Manager();
+
   @override
   void initState() {
     super.initState();
@@ -39,8 +42,18 @@ class _JoinPageState extends State<JoinPage> {
     }
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadAndPlayMusic("musics/main_menu.mp3");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rejoindre une room'),

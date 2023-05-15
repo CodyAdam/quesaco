@@ -57,15 +57,16 @@ class _HomeState extends State<Music> {
       answerWasSelected = false;
     });
     if (questionIndex >= list.length) {
-      goToMenu();
+      endTheGame();
     }
     m.audioPlayer.stop();
   }
 
-  void goToMenu() {
+  void endTheGame() {
     setState(() {
       questionIndex = 0;
       endOfQuiz = false;
+      m.audioPlayer.stop();
       m.setInt("MinigameId", -1);
       m.clearGamesData();
     });
@@ -74,6 +75,7 @@ class _HomeState extends State<Music> {
   @override
   void initState() {
     super.initState();
+    m.audioPlayer.stop();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       list = random(r);
       gameStarted = true;
