@@ -59,40 +59,38 @@ class _JoinPageState extends State<JoinPage> {
         title: const Text('Rejoindre une room'),
       ),
       body: Consumer<Manager>(builder: (context, m, child) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
+        return ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            Row(
+              children: [
+                const Text('Les rooms disponibles',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w300,
+                    )),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: onRefresh,
+                  child: const Text('Actualiser'),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+            for (var peer in m.peers)
               Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      const Text('Les rooms disponibles',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                          )),
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: onRefresh,
-                        child: const Text('Actualiser'),
-                      ),
-                    ],
-                  )),
-              for (var peer in m.peers)
-                Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Card(
-                      child: ListTile(
-                        title: Text(peer.deviceName),
-                        subtitle: const Text("Appuyer pour rejoindre"),
-                        onTap: () {
-                          onConnect(peer, context);
-                        },
-                      ),
-                    ))
-            ],
-          ),
+                padding: const EdgeInsets.all(12),
+                child: Card(
+                  child: ListTile(
+                    title: Text(peer.deviceName),
+                    subtitle: const Text("Appuyer pour rejoindre"),
+                    onTap: () {
+                      onConnect(peer, context);
+                    },
+                  ),
+                ),
+              ),
+          ],
         );
       }),
     );
