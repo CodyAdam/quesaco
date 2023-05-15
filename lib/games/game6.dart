@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' hide log;
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
@@ -159,8 +160,18 @@ class Game6 extends FlameGame with DragCallbacks {
     }
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   void endTheGame() async {
     isPlaying = false;
+    m.audioPlayer.stop();
     if (timer != null) {
       timer!.timer.stop();
     }
@@ -201,6 +212,8 @@ class Game6 extends FlameGame with DragCallbacks {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    m.audioPlayer.stop();
+
     playerImg = await images.load('Grimacing Face.png');
     player = SpriteComponent.fromImage(playerImg,
         position: Vector2(size.x / 2, size.y / 2),
@@ -212,5 +225,7 @@ class Game6 extends FlameGame with DragCallbacks {
 
     });
     await startSequence();
+
+    loadAndPlayMusic("musics/game.mp3");
   }
 }

@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quesaco/services/connection_manager.dart';
@@ -14,12 +15,25 @@ class WaitingPage extends StatefulWidget {
 }
 
 class _WaitingPageState extends State<WaitingPage> {
+  Manager m = Manager();
+
   void onRefresh() async {
     Manager().refreshRoom();
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadAndPlayMusic("musics/main_menu.mp3");
+
     Future.delayed(const Duration(seconds: 1), () {
       Manager().refreshRoom();
     });

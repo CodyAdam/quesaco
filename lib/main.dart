@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:quesaco/models/game_state.dart';
 import 'package:quesaco/screens/menu.dart';
 import 'package:quesaco/services/connection_manager.dart';
 
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
 
 class MenuObserver extends NavigatorObserver {
   final Function onMenuPagePush;
+  Manager m = Manager();
 
   MenuObserver({required this.onMenuPagePush});
 
@@ -49,6 +51,9 @@ class MenuObserver extends NavigatorObserver {
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if(route is PopupRoute) {
     } else {
+      if(m.getInt(MINIGAME_ID) != 0 && m.getInt(MINIGAME_ID) != -1) {
+        m.audioPlayer.stop();
+      }
       onMenuPagePush();
     }
     super.didPop(route, previousRoute);

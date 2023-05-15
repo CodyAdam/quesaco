@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:quesaco/games/emoji/slice.dart';
 import 'package:quesaco/games/emoji/slice_math.dart';
@@ -41,10 +42,12 @@ class EmojiWidgetState extends State<EmojiWidget> {
   String timeRemaining = "";
 
   Manager m = Manager();
+  int score = 0;
 
 
-  void goToMenu() {
+  void endTheGame() {
     setState(() {
+      m.audioPlayer.stop();
       m.setInt("MinigameId", -1);
       m.clearGamesData();
     });
@@ -61,15 +64,26 @@ class EmojiWidgetState extends State<EmojiWidget> {
   String formatDuration(Duration duration) {
     int remaining = timeLimit-duration.inSeconds.remainder(60);
     if(remaining<=0) {
-      goToMenu();
+      endTheGame();
       stopwatch.reset();
     }
     return remaining.toString();
   }
 
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
   @override
   void initState() {
     super.initState();
+    m.audioPlayer.stop();
+
     timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
     stopwatch.start();
 
@@ -96,9 +110,10 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if(m.getInt(m.me)! >= 1000 || m.getInt(m.other)! >= 1000) {
-      goToMenu();
+    if(score >= 1000 || score >= 1000) {
+      endTheGame();
     }
+    loadAndPlayMusic("musics/game.mp3");
     double ppu = widget.screenSize.height / widget.worldSize.height;
     List<Widget> stackItems = [];
     for (Emoji e in emoji) {
@@ -197,8 +212,10 @@ class EmojiWidgetState extends State<EmojiWidget> {
             }
             for(Emoji e in toRemove) {
               if(e.type == EmojiType.love) {
+                score -= 20;
                 m.setInt(m.me, m.getInt(m.me)!-20);
               } else {
+                score += 20;
                 m.setInt(m.me, m.getInt(m.me)!+20);
               }
             }

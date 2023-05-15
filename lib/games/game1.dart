@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:quesaco/widget/answer.dart';
 
@@ -77,12 +78,22 @@ class _HomeState extends State<Flag> {
       answerWasSelected = false;
     });
     if (questionIndex >= list.length) {
-      goToMenu();
+      endTheGame();
     }
   }
 
-  void goToMenu() {
+  void loadAndPlayMusic(String music) async {
+    if (m.audioPlayer.state == PlayerState.playing) {
+      return;
+    }
+    await m.audioCache.load(music);
+
+    m.audioPlayer.play(AssetSource(music));
+  }
+
+  void endTheGame() {
     setState(() {
+      m.audioPlayer.stop();
       questionIndex = 0;
       endOfQuiz = false;
       m.clearGamesData();
@@ -93,6 +104,7 @@ class _HomeState extends State<Flag> {
   @override
   void initState() {
     super.initState();
+    m.audioPlayer.stop();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       list = random(r);
       gameStarted = true;
@@ -120,7 +132,7 @@ class _HomeState extends State<Flag> {
   String formatDuration(Duration duration) {
     int remaining = timeLimit - duration.inSeconds.remainder(60) - 1;
     if (remaining <= 0) {
-      goToMenu();
+      endTheGame();
       //stopwatch.reset();
     }
     return remaining.toString();
@@ -132,6 +144,7 @@ class _HomeState extends State<Flag> {
       return const Scaffold(body: Center(child: Text("En attente ...")));
     } else {
       var goodList = getGoodOnes(list);
+      loadAndPlayMusic("musics/game.mp3");
 
       return Scaffold(
         body: Center(
