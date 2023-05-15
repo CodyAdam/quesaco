@@ -4,17 +4,17 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quesaco/games/game3.dart';
+import 'package:quesaco/games/game1.dart';
 import 'package:quesaco/games/game2.dart';
+import 'package:quesaco/games/game3.dart';
+import 'package:quesaco/games/game4.dart';
+import 'package:quesaco/games/game5.dart';
+import 'package:quesaco/games/game6.dart';
+import 'package:quesaco/models/game_state.dart';
+import 'package:quesaco/services/connection_manager.dart';
+import 'package:quesaco/widget/card.dart';
+import 'package:quesaco/widget/score_bar.dart';
 import 'package:quesaco/widget/score_widget.dart';
-
-import '../games/game5.dart';
-import '../games/game1.dart';
-import '../games/game4.dart';
-import '../models/game_state.dart';
-import '../services/connection_manager.dart';
-import '../widget/card.dart';
-import '../widget/score_bar.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({super.key});
@@ -26,10 +26,6 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  void selectGame(int id) {
-    Manager().setInt(MINIGAME_ID, id);
-  }
-
   @override
   Widget build(BuildContext context) {
     List<String> gamesIdShuffled = [];
@@ -77,7 +73,7 @@ class _GamePageState extends State<GamePage> {
                   title: Text("Minigame $id"),
                   automaticallyImplyLeading: false,
                 ),
-                body: const Text("Game 6"),
+                body: GameWidget(game: Game6()),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == -1) {
             return Scaffold(body: scoreWidget());
@@ -180,5 +176,9 @@ class _GamePageState extends State<GamePage> {
             );
           }
         });
+  }
+
+  void selectGame(int id) {
+    Manager().setInt(MINIGAME_ID, id);
   }
 }

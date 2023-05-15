@@ -42,6 +42,7 @@ dependencies:
   json_annotation: ^4.8.1
   flame: ^1.7.3
   flutter_launcher_icons: ^0.13.1
+  sensors_plus: ^3.0.0
 
 dev_dependencies:
   flutter_test:
