@@ -1,16 +1,20 @@
-# quesaco
+<p align=center> 
+  <img src="assets/icon/banner.png"/>
+</p>
+<h2 align=center>
+  Flutter Multiplayer Minigames
+</h2>
+<p align=center>
+  By Arthur ALLAIN & Cody ADAM
+</p>
 
-A new Flutter project.
+---
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Main menu](doc/main.png)
+![Games](doc/Screenshot%20from%202023-05-15%2017-57-34.png)
+![Cahier des charges](doc/Screenshot%20from%202023-05-15%2017-57-15.png)
+![Addition](doc/Screenshot%20from%202023-05-15%2017-57-23.png)
+![Timeline](doc/Screenshot%20from%202023-05-15%2017-57-29.png)
+![Pages](doc/Screenshot%20from%202023-05-15%2017-57-46.png)
+![Peer 2 peer](doc/Screenshot%20from%202023-05-15%2017-57-54.png)
+![Syncho](doc/Screenshot%20from%202023-05-15%2017-58-03.png)
