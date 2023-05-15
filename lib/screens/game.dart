@@ -42,10 +42,12 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
 
     List<String> gamesIdShuffled = [];
-    for (int i = 1; i <= 3; i++) {
+    for (int i = 1; i <= 6; i++) {
       gamesIdShuffled.add(i.toString());
     }
     gamesIdShuffled.shuffle();
+    // only the first 3 games are played
+    gamesIdShuffled = gamesIdShuffled.sublist(0, 3);
     return Selector<Manager, int>(
         selector: (_, m) => m.getInt(MINIGAME_ID) ?? 0,
         builder: (context, id, child) {
