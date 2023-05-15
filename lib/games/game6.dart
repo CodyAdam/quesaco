@@ -143,9 +143,10 @@ class Game6 extends FlameGame with DragCallbacks {
       timerText!.text = gyro.toString().characters.take(5).toString();
     }
 
-    if(player != null) {
+    if (player != null) {
       // easing to gyro in degree
-      player!.angle = lerpDouble(player!.angle * 180 / pi, gyro , 0.1)! * pi / 180;
+      player!.angle =
+          lerpDouble(player!.angle * 180 / pi, gyro, 0.1)! * pi / 180;
     }
   }
 
@@ -170,6 +171,7 @@ class Game6 extends FlameGame with DragCallbacks {
   }
 
   void endTheGame() async {
+    _gyroStream.cancel();
     isPlaying = false;
     m.audioPlayer.stop();
     if (timer != null) {
@@ -222,7 +224,6 @@ class Game6 extends FlameGame with DragCallbacks {
     add(player!);
     _gyroStream = magnetometerEvents.listen((MagnetometerEvent event) {
       gyro = event.y;
-
     });
     await startSequence();
 
