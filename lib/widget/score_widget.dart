@@ -39,6 +39,12 @@ Widget scoreWidget() {
       m.goToNextGame();
     }
   });
+  if (m.hasUpcomingGames()) {
+    return const Scaffold(
+        body: Center(
+      child: CircularProgressIndicator(),
+    ));
+  }
   return Scaffold(
       body: Center(
           child: Column(

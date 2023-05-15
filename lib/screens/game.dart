@@ -42,7 +42,7 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
 
     List<String> gamesIdShuffled = [];
-    for (int i = 1; i <= 6; i++) {
+    for (int i = 1; i <= 3; i++) {
       gamesIdShuffled.add(i.toString());
     }
     gamesIdShuffled.shuffle();
