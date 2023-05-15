@@ -9,9 +9,8 @@ Widget scoreWidget() {
   Manager m = Manager();
 
   void loadAndPlayMusic(String music) async {
-    if (m.audioPlayer.state == PlayerState.playing) {
-      return;
-    }
+    m.audioPlayer.stop();
+
     await m.audioCache.load(music);
 
     m.audioPlayer.play(AssetSource(music));
