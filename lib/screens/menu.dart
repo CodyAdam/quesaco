@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:quesaco/screens/game.dart';
@@ -36,58 +38,41 @@ class _MenuState extends State<Menu> {
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        elevation: MaterialStateProperty.all(5),
-                        backgroundColor: MaterialStateProperty.all(
-                          const Color.fromARGB(255, 61, 159, 239),
-                        ),
-                      ),
-                      onPressed: () async {
-                        // Navigate
-                        Manager().isSolo = true;
-                        Manager().startGame();
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const GamePage()),
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Jouer en Solo',
-                          style: TextStyle(fontSize: 28),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        elevation: MaterialStateProperty.all(5),
-                        backgroundColor: MaterialStateProperty.all(
-                          const Color.fromARGB(255, 160, 220, 57),
-                        ),
-                      ),
-                      onPressed: () async {
-                        // Navigate
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HostPage()),
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Créer une room',
-                          style: TextStyle(fontSize: 28),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all(2),
+                            backgroundColor: MaterialStateProperty.all(
+                              Color.fromARGB(136, 104, 175, 234),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30.0), // Adjust the value to control the roundness
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            // Navigate
+                            Manager().isSolo = true;
+                            Manager().startGame();
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const GamePage()),
+                            );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text(
+                              'Jouer en Solo',
+                              style: TextStyle(fontSize: 28),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -98,25 +83,82 @@ class _MenuState extends State<Menu> {
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        elevation: MaterialStateProperty.all(5),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.green),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all(2),
+                            backgroundColor: MaterialStateProperty.all(
+                              Color.fromARGB(136, 119, 238, 159),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30.0), // Adjust the value to control the roundness
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            // Navigate
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HostPage()),
+                            );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text(
+                              'Créer une partie',
+                              style: TextStyle(fontSize: 28),
+                            ),
+                          ),
+                        ),
                       ),
-                      onPressed: () async {
-                        // Navigate
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const JoinPage()),
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Rejoindre une room',
-                          style: TextStyle(fontSize: 28),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all(2),
+                            backgroundColor: MaterialStateProperty.all(
+                              Color.fromARGB(136, 119, 238, 159),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    30.0), // Adjust the value to control the roundness
+                              ),
+                            ),
+                          ),
+                          onPressed: () async {
+                            // Navigate
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const JoinPage()),
+                            );
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Text(
+                              'Rejoindre une partie',
+                              style: TextStyle(fontSize: 28),
+                            ),
+                          ),
                         ),
                       ),
                     ),
