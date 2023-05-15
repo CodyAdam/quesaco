@@ -44,7 +44,8 @@ class EmojiWidgetState extends State<EmojiWidget> {
   String timeRemaining = "";
 
   Manager m = Manager();
-  int score = 0;
+  int score_other = 0;
+  int score_me = 0;
 
   void endTheGame() {
     m.audioPlayer.stop();
@@ -83,6 +84,9 @@ class EmojiWidgetState extends State<EmojiWidget> {
     super.initState();
     m.audioPlayer.stop();
 
+    score_me = m.getInt(m.me)!;
+    score_other = m.getInt(m.other)!;
+
     timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
     stopwatch.start();
 
@@ -112,7 +116,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (score >= 1000 || score >= 1000) {
+    if (m.getInt(m.me)!-score_me  >= 1000 || m.getInt(m.other)!-score_other >= 1000) {
       endTheGame();
     }
     loadAndPlayMusic("musics/game.mp3");
@@ -225,10 +229,8 @@ class EmojiWidgetState extends State<EmojiWidget> {
             }
             for (Emoji e in toRemove) {
               if (e.type == EmojiType.love) {
-                score -= 20;
                 m.setInt(m.me, m.getInt(m.me)! - 20);
               } else {
-                score += 20;
                 m.setInt(m.me, m.getInt(m.me)! + 20);
               }
             }
