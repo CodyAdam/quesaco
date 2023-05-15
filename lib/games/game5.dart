@@ -14,7 +14,9 @@ class EmojiWidget extends StatefulWidget {
   final Size screenSize;
   final Size worldSize;
 
-  const EmojiWidget({required Key key, required this.screenSize, required this.worldSize}) : super(key: key);
+  const EmojiWidget(
+      {required Key key, required this.screenSize, required this.worldSize})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => EmojiWidgetState();
@@ -42,12 +44,9 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   Manager m = Manager();
 
-
   void goToMenu() {
-    setState(() {
-      m.setInt("MinigameId", -1);
-      m.clearGamesData();
-    });
+    m.setInt("MinigameId", -1);
+    m.clearGamesData();
   }
 
   void onTimerTick(Timer timer) {
@@ -59,8 +58,8 @@ class EmojiWidgetState extends State<EmojiWidget> {
   }
 
   String formatDuration(Duration duration) {
-    int remaining = timeLimit-duration.inSeconds.remainder(60);
-    if(remaining<=0) {
+    int remaining = timeLimit - duration.inSeconds.remainder(60);
+    if (remaining <= 0) {
       goToMenu();
       stopwatch.reset();
     }
@@ -73,15 +72,18 @@ class EmojiWidgetState extends State<EmojiWidget> {
     timer = Timer.periodic(const Duration(seconds: 1), onTimerTick);
     stopwatch.start();
 
-    emojiTimer = Timer.periodic(const Duration(milliseconds: 350), (Timer timer) {
+    emojiTimer =
+        Timer.periodic(const Duration(milliseconds: 350), (Timer timer) {
       setState(() {
         emoji.add(Emoji(
             createdMS: DateTime.now().millisecondsSinceEpoch,
             flightPath: FlightPath(
                 angle: 1.0,
                 angularVelocity: .3 + r.nextDouble() * 3.0,
-                position: Offset(2.0 + r.nextDouble() * (widget.worldSize.width - 4.0), 1.0),
-                velocity: Offset(-1.0 + r.nextDouble() * 2.0, 10.0 + r.nextDouble() * 7.0)),
+                position: Offset(
+                    2.0 + r.nextDouble() * (widget.worldSize.width - 4.0), 1.0),
+                velocity: Offset(
+                    -1.0 + r.nextDouble() * 2.0, 10.0 + r.nextDouble() * 7.0)),
             type: EmojiType.values[r.nextInt(EmojiType.values.length)]));
       });
     });
@@ -96,7 +98,7 @@ class EmojiWidgetState extends State<EmojiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if(m.getInt(m.me)! >= 1000 || m.getInt(m.other)! >= 1000) {
+    if (m.getInt(m.me)! >= 1000 || m.getInt(m.other)! >= 1000) {
       goToMenu();
     }
     double ppu = widget.screenSize.height / widget.worldSize.height;
@@ -116,18 +118,21 @@ class EmojiWidgetState extends State<EmojiWidget> {
       ));
     }
     for (Slice slice in slices) {
-      Offset b = Offset(slice.begin.dx * ppu, (widget.worldSize.height - slice.begin.dy) * ppu);
-      Offset e = Offset(slice.end.dx * ppu, (widget.worldSize.height - slice.end.dy) * ppu);
+      Offset b = Offset(slice.begin.dx * ppu,
+          (widget.worldSize.height - slice.begin.dy) * ppu);
+      Offset e = Offset(
+          slice.end.dx * ppu, (widget.worldSize.height - slice.end.dy) * ppu);
       stackItems.add(Positioned.fill(
           child: SliceWidget(
-            sliceBegin: b,
-            sliceEnd: e,
-            sliceFinished: () {
-              setState(() {
-                slices.remove(slice);
-              });
-            }, key: const Key(""),
-          )));
+        sliceBegin: b,
+        sliceEnd: e,
+        sliceFinished: () {
+          setState(() {
+            slices.remove(slice);
+          });
+        },
+        key: const Key(""),
+      )));
     }
     for (EmojiSliced es in emojiSliced) {
       stackItems.add(FlightPathWidget(
@@ -135,7 +140,9 @@ class EmojiWidgetState extends State<EmojiWidget> {
         flightPath: es.flightPath,
         unitSize: es.type.unitSize,
         pixelsPerUnit: ppu,
-        child: ClipPath(clipper: EmojiSlicePath(es.slice), child: es.type.getImageWidget(ppu)),
+        child: ClipPath(
+            clipper: EmojiSlicePath(es.slice),
+            child: es.type.getImageWidget(ppu)),
         onOffScreen: () {
           setState(() {
             emojiSliced.remove(es);
@@ -158,11 +165,13 @@ class EmojiWidgetState extends State<EmojiWidget> {
       },
       onPanEnd: (DragEndDetails details) {
         int nowMS = DateTime.now().millisecondsSinceEpoch;
-        if (nowMS - sliceBeginMoment < 1250 && (sliceEnd - sliceBeginPosition).distanceSquared > 25.0) {
+        if (nowMS - sliceBeginMoment < 1250 &&
+            (sliceEnd - sliceBeginPosition).distanceSquared > 25.0) {
           setState(() {
-            Offset worldSliceBegin =
-            Offset(sliceBeginPosition.dx / ppu, (widget.screenSize.height - sliceBeginPosition.dy) / ppu);
-            Offset worldSliceEnd = Offset(sliceEnd.dx / ppu, (widget.screenSize.height - sliceEnd.dy) / ppu);
+            Offset worldSliceBegin = Offset(sliceBeginPosition.dx / ppu,
+                (widget.screenSize.height - sliceBeginPosition.dy) / ppu);
+            Offset worldSliceEnd = Offset(sliceEnd.dx / ppu,
+                (widget.screenSize.height - sliceEnd.dy) / ppu);
             slices.add(Slice(worldSliceBegin, worldSliceEnd));
             Offset direction = worldSliceEnd - worldSliceBegin;
 
@@ -173,15 +182,17 @@ class EmojiWidgetState extends State<EmojiWidget> {
               double elapsedSeconds = (nowMS - e.createdMS) / 1000.0;
               Offset currPos = e.flightPath.getPosition(elapsedSeconds);
               double currAngle = e.flightPath.getAngle(elapsedSeconds);
-              List<List<Offset>> sliceParts =
-              getSlicePaths(worldSliceBegin, worldSliceEnd, e.type.unitSize, currPos, currAngle);
+              List<List<Offset>> sliceParts = getSlicePaths(worldSliceBegin,
+                  worldSliceEnd, e.type.unitSize, currPos, currAngle);
               if (sliceParts.isNotEmpty) {
                 toRemove.add(e);
                 emojiSliced.add(EmojiSliced(
                     slice: sliceParts[0],
                     flightPath: FlightPath(
                         angle: currAngle,
-                        angularVelocity: e.flightPath.angularVelocity - .25 + r.nextDouble() * .5,
+                        angularVelocity: e.flightPath.angularVelocity -
+                            .25 +
+                            r.nextDouble() * .5,
                         position: currPos,
                         velocity: const Offset(-1.0, 2.0)),
                     type: e.type));
@@ -189,17 +200,19 @@ class EmojiWidgetState extends State<EmojiWidget> {
                     slice: sliceParts[1],
                     flightPath: FlightPath(
                         angle: currAngle,
-                        angularVelocity: e.flightPath.angularVelocity - .25 + r.nextDouble() * .5,
+                        angularVelocity: e.flightPath.angularVelocity -
+                            .25 +
+                            r.nextDouble() * .5,
                         position: currPos,
                         velocity: const Offset(1.0, 2.0)),
                     type: e.type));
               }
             }
-            for(Emoji e in toRemove) {
-              if(e.type == EmojiType.love) {
-                m.setInt(m.me, m.getInt(m.me)!-20);
+            for (Emoji e in toRemove) {
+              if (e.type == EmojiType.love) {
+                m.setInt(m.me, m.getInt(m.me)! - 20);
               } else {
-                m.setInt(m.me, m.getInt(m.me)!+20);
+                m.setInt(m.me, m.getInt(m.me)! + 20);
               }
             }
             emoji.removeWhere((e) => toRemove.contains(e));
@@ -217,7 +230,9 @@ class EmojiSlicePath extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    Path p = Path()..moveTo(normalizedPoints[0].dx * size.width, normalizedPoints[0].dy * size.height);
+    Path p = Path()
+      ..moveTo(normalizedPoints[0].dx * size.width,
+          normalizedPoints[0].dy * size.height);
     for (Offset o in normalizedPoints.skip(1)) {
       p.lineTo(o.dx * size.width, o.dy * size.height);
     }
@@ -236,11 +251,12 @@ Widget EmojiGame() {
           color: Colors.white,
           child: LayoutBuilder(builder: (context, constraints) {
             Size screenSize = Size(constraints.maxWidth, constraints.maxHeight);
-            Size worldSize = Size(
-                WORLD_HEIGHT * screenSize.aspectRatio, WORLD_HEIGHT);
+            Size worldSize =
+                Size(WORLD_HEIGHT * screenSize.aspectRatio, WORLD_HEIGHT);
             return EmojiWidget(
               screenSize: Size(constraints.maxWidth, constraints.maxHeight),
-              worldSize: worldSize, key: const Key(""),
+              worldSize: worldSize,
+              key: const Key(""),
             );
           })));
 }

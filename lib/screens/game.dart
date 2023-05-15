@@ -69,10 +69,6 @@ class _GamePageState extends State<GamePage> {
                 body: EmojiGame(), bottomNavigationBar: gameScoreBar(context));
           } else if (id == 6) {
             return Scaffold(
-                appBar: AppBar(
-                  title: Text("Minigame $id"),
-                  automaticallyImplyLeading: false,
-                ),
                 body: GameWidget(game: Game6()),
                 bottomNavigationBar: gameScoreBar(context));
           } else if (id == -1) {

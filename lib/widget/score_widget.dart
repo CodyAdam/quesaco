@@ -6,11 +6,12 @@ Widget scoreWidget() {
   bool hasWon = false;
 
   Manager m = Manager();
+
   if (m.getInt(m.me)! >= m.getInt(m.other)!) {
     hasWon = true;
   }
   // wait 5 sec then call
-  Future.delayed(const Duration(seconds: 5), () {
+  Future.delayed(Duration(seconds: m.hasUpcomingGames() ? 0 : 5), () {
     m.clearGamesData();
     if (m.isHost) {
       m.goToNextGame();

@@ -259,7 +259,7 @@ class Manager extends GameState {
     log("Error when receiving message (message.split(\":\").length != 2): $message");
   }
 
-  bool isChainingGames() {
+  bool hasUpcomingGames() {
     var str = getString(UPCOMING_MINIGAMES_ID);
     if (str == null) {
       return false;

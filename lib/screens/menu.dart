@@ -46,7 +46,7 @@ class _MenuState extends State<Menu> {
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(2),
                             backgroundColor: MaterialStateProperty.all(
-                              Color.fromARGB(135, 125, 144, 255),
+                              Color.fromARGB(170, 125, 144, 255),
                             ),
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
@@ -91,7 +91,7 @@ class _MenuState extends State<Menu> {
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(2),
                             backgroundColor: MaterialStateProperty.all(
-                              Color.fromARGB(135, 14, 255, 95),
+                              Color.fromARGB(170, 14, 255, 95),
                             ),
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(
@@ -134,7 +134,7 @@ class _MenuState extends State<Menu> {
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(2),
                             backgroundColor: MaterialStateProperty.all(
-                              Color.fromARGB(135, 14, 255, 95),
+                              Color.fromARGB(170, 14, 255, 94),
                             ),
                             shape: MaterialStateProperty.all<
                                 RoundedRectangleBorder>(

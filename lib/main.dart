@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
   final MenuObserver menuObserver = MenuObserver(onMenuPagePush: () {
     log("Menu observer called");
     Manager().disconnect();
-    // call _onResetEverything or any other function here
   });
 
   @override
